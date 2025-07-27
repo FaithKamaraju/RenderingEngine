@@ -71,6 +71,9 @@ namespace RE {
             std::cerr << "Failed to initialize GLAD" << std::endl;
             return -1;
         }
+
+        std::cout << glGetString(GL_VERSION) << "\n";
+
         glViewport(0, 0, 800, 600);
         glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 

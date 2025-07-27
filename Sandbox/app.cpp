@@ -1,6 +1,8 @@
 #include <iostream>
 #include "Renderer/renderer.h"
 
+
+
 int main() {
 	RE::Renderer* renderer = RE::createRenderer();
 	if (!renderer) {
