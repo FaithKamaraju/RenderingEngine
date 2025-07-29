@@ -81,6 +81,7 @@ project "Renderer"
     {
         IncludeDir.GLFW,
         IncludeDir.Glad,
+        "Renderer/Renderer/"
     }
     links 
     {
@@ -89,6 +90,7 @@ project "Renderer"
     }
     postbuildcommands
     {
+        ("{MKDIR} ../bin/" .. outputdir .. "/Sandbox/"),
         ("{COPYFILE} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
     }
 

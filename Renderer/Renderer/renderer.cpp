@@ -1,5 +1,7 @@
 #include "renderer.h"
-#include "Shader.h"
+#include "OpenGL/Shader.h"
+#include "OpenGL/VertexArrayObject.h"
+#include "OpenGL/VerticesMetaData.h"
 
 #include <iostream>
 #include "glad/glad.h"
@@ -63,10 +65,10 @@ namespace RE {
 
         std::cout << glGetString(GL_VERSION) << "\n";
         int nrAttributes;
-        glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
+        GLCall(glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes));
         std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
 
-        glViewport(0, 0, 800, 600);
+        GLCall(glViewport(0, 0, 800, 600));
         glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
         Shader shader;
@@ -89,36 +91,18 @@ namespace RE {
              1, 2, 3    // second triangle
         };
 
-        unsigned int arrayObjs[2];
-        glGenVertexArrays(2, arrayObjs);
 
-        unsigned int buffers[2];
-        glGenBuffers(2,buffers);
-
-        unsigned int EBO;
-        glGenBuffers(1, &EBO);
-
-        glBindVertexArray(arrayObjs[0]);
-            glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-            glEnableVertexAttribArray(0);
-        glBindVertexArray(0);
-
-        glBindVertexArray(arrayObjs[1]);
-            glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-            glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-            glEnableVertexAttribArray(0);
-        glBindVertexArray(0);
+        const VertexAttribute attr[1] = { VertexAttribute(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0) };
         
-        //glUseProgram(shaderProgram);
-        
-
+        VertexArrayObject vao[2];
+        vao[0].Bind();
+        vao[0].BindVertexBuffer(vertices1, sizeof(vertices1), attr, 1, GL_STATIC_DRAW);
+        vao[0].BindElementBuffer(indices, sizeof(indices), GL_STATIC_DRAW);
+        vao[0].UnBind();
+        vao[1].Bind();
+        vao[1].BindVertexBuffer(vertices2, sizeof(vertices2), attr, 1, GL_STATIC_DRAW);
+        vao[1].BindElementBuffer(indices, sizeof(indices), GL_STATIC_DRAW);
+        vao[1].UnBind();
         
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
@@ -126,20 +110,15 @@ namespace RE {
             processInput(window);
 
             /* Render here */
-            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
+            GLCall(glClearColor(0.2f, 0.3f, 0.3f, 1.0f));
+            GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
             shader.UseShaderProgram();
-            for (auto obj : arrayObjs) {
-                glBindVertexArray(obj);
-                glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            for (auto& obj : vao) {
+                obj.Bind();
+                GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
             }
             
-            //glDrawArrays(GL_TRIANGLES, 0, 6);
-            //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            
-            
-            //glBindVertexArray(0);
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
 
