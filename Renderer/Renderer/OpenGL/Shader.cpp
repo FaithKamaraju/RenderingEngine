@@ -107,15 +107,15 @@ void RE::Shader::UseShaderProgram()
 
 void RE::Shader::setBool(const std::string& name, bool value) const
 {
-	glUniform1i(glGetUniformLocation(this->m_ShaderProgramID, name.c_str()), (int)value);
+	GLCall(glUniform1i(glGetUniformLocation(this->m_ShaderProgramID, name.c_str()), (int)value));
 }
 void RE::Shader::setInt(const std::string& name, int value) const
 {
-	glUniform1i(glGetUniformLocation(this->m_ShaderProgramID, name.c_str()), value);
+	GLCall(glUniform1i(glGetUniformLocation(this->m_ShaderProgramID, name.c_str()), value));
 }
 void RE::Shader::setFloat(const std::string& name, float value) const
 {
-	glUniform1f(glGetUniformLocation(this->m_ShaderProgramID, name.c_str()), value);
+	GLCall(glUniform1f(glGetUniformLocation(this->m_ShaderProgramID, name.c_str()), value));
 }
 
 

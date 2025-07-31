@@ -12,9 +12,11 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["GLFW"] = "external/glfw/include" 
 IncludeDir["Glad"] = "external/glad/include"
+IncludeDir["GLM"]  = "external/glm/"
 
 include "external/glfw"
 include "external/glad"
+include "external/glm"
 
 project "Sandbox"
     location "Sandbox"
@@ -81,12 +83,14 @@ project "Renderer"
     {
         IncludeDir.GLFW,
         IncludeDir.Glad,
+        IncludeDir.GLM,
         "Renderer/Renderer/"
     }
     links 
     {
         "GLFW",
         "Glad",
+        "GLM"
     }
     postbuildcommands
     {
