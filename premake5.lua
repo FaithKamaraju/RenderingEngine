@@ -32,12 +32,14 @@ project "Sandbox"
 
     includedirs
     {
+        IncludeDir.GLM,
         "Renderer/"
     }
 
     links
     {
-        "Renderer"
+        "Renderer",
+        "GLM"
     }
 
     filter "configurations:Debug"

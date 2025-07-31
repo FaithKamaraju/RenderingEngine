@@ -33,9 +33,10 @@ namespace RE {
 		void AttachShaders(const char* path);
 		void UseShaderProgram();
 
-		void setBool(const std::string& name, bool value) const;
-		void setInt(const std::string& name, int value) const;
-		void setFloat(const std::string& name, float value) const;
+		void setBool(const char* name, bool value) const;
+		void setInt(const char* name, int value) const;
+		void setFloat(const char* name, float value) const;
+		void setMatrix4fv(const char* name, size_t count, bool bTranspose, const float* value);
 
 	private:
 		ShaderSourceObject parseShaderSource(const char* path);

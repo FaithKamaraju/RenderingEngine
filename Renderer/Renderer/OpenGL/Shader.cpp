@@ -4,6 +4,9 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 
 
@@ -105,17 +108,22 @@ void RE::Shader::UseShaderProgram()
 	GLCall(glUseProgram(this->m_ShaderProgramID));
 }
 
-void RE::Shader::setBool(const std::string& name, bool value) const
+void RE::Shader::setBool(const char* name, bool value) const
 {
-	GLCall(glUniform1i(glGetUniformLocation(this->m_ShaderProgramID, name.c_str()), (int)value));
+	GLCall(glUniform1i(glGetUniformLocation(this->m_ShaderProgramID, name), (int)value));
 }
-void RE::Shader::setInt(const std::string& name, int value) const
+void RE::Shader::setInt(const char* name, int value) const
 {
-	GLCall(glUniform1i(glGetUniformLocation(this->m_ShaderProgramID, name.c_str()), value));
+	GLCall(glUniform1i(glGetUniformLocation(this->m_ShaderProgramID, name), value));
 }
-void RE::Shader::setFloat(const std::string& name, float value) const
+void RE::Shader::setFloat(const char* name, float value) const
 {
-	GLCall(glUniform1f(glGetUniformLocation(this->m_ShaderProgramID, name.c_str()), value));
+	GLCall(glUniform1f(glGetUniformLocation(this->m_ShaderProgramID, name), value));
+}
+
+void RE::Shader::setMatrix4fv(const char* name, size_t count ,bool bTranspose ,const float* value)
+{
+	GLCall(glUniformMatrix4fv(glGetUniformLocation(this->m_ShaderProgramID, name), count, bTranspose, value));
 }
 
 
