@@ -17,4 +17,4 @@ namespace RE {
 	
 }
 
-#pragma warning( disable: 4251 )
+

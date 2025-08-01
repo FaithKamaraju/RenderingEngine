@@ -17,4 +17,4 @@
 	#error Rendering Engine only supports Windows!
 #endif
 
-
+#pragma warning( disable: 4251 )

@@ -16,12 +16,14 @@ namespace RE {
 		ObjectTransform getTransform() const;
 		void setTransform(const ObjectTransform& otherTransform);
 
+		void setPosition(float x, float y, float z);
+		void setRotation(float pitch, float yaw, float roll);
+		void setScale(float x, float y, float z);
+
 		void translate(float x, float y, float z);
 		void translate(glm::vec3 translateBy);
 		void rotate(float pitch, float yaw, float roll);
 		void rotate(glm::vec3 rotateBy);
-		void scale(float x, float y, float z);
-		void scale(glm::vec3 scaleBy);
 
 		virtual void tick(float deltaTime) = 0;
 		virtual void processInput(float deltaTime) = 0;

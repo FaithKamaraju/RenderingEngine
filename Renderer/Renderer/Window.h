@@ -4,7 +4,11 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
+
+#include "InputHandler.h"
+
 namespace RE {
+
 
 	class RE_API Window {
 	public:
@@ -22,11 +26,15 @@ namespace RE {
 		
 		GLFWwindow* getWindowRef() const;
 		bool getWindowShouldClose() const;
-		bool initGLAD() const;
-		void setFrameBufferSizeCallBack() const;
 
+		bool initGLAD() const;
+		void setInputMode(GLenum mode, GLenum value) const;
 		void processInput();
 		void swapBuffers();
+		
+		void setFrameBufferSizeCallBack() const;
+		
+		
 
 
 		static void MakeContextCurrent(const Window& window) {
@@ -35,6 +43,11 @@ namespace RE {
 		static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 		{
 			GLCall(glViewport(0, 0, width, height));
+		}
+
+		static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+		{
+			InputHandler::GetInputHandlerInstance(window)->setCursorPos({xpos, ypos});
 		}
 	};
 }

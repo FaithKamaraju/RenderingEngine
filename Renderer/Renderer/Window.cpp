@@ -1,6 +1,8 @@
 #include "Window.h"
 
+
 #include <iostream>
+
 
 RE::Window::Window(int width, int height, const char* title)
     : m_Width(width), m_Height(height), m_WindowTitle(title)
@@ -25,6 +27,7 @@ RE::Window::Window(int width, int height, const char* title)
 
     /* Make the window's context current */
     glfwMakeContextCurrent(m_Window);
+    glfwSetCursorPosCallback(m_Window, mouse_callback);
 
 }
 
@@ -66,6 +69,12 @@ void RE::Window::setFrameBufferSizeCallBack() const
 {
     GLCall(glViewport(0, 0, m_Width, m_Height));
     glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
+}
+
+
+void RE::Window::setInputMode(GLenum mode, GLenum value) const
+{
+    glfwSetInputMode(this->m_Window, mode, value);
 }
 
 void RE::Window::processInput()

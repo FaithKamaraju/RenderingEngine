@@ -8,6 +8,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Window.h"
+#include "InputHandler.h"
 #include "Object.h"
 
 
@@ -22,6 +24,9 @@ namespace RE {
 		
 	private:
 
+		float m_lastX, m_lastY;
+		bool m_bFirstMouse = false;
+
 		std::shared_ptr<Window> m_windowRef;
 
 	public:
@@ -31,8 +36,9 @@ namespace RE {
 
 		void tick(float deltaTime) override;
 		void processInput(float deltaTime) override;
+		void cameraLook(double xpos, double ypos);
+		
 
-	private:
 	};
 }
 

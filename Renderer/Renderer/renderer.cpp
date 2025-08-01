@@ -1,4 +1,5 @@
 
+#include "renderer.h"
 #include <iostream>
 #include <memory>
 
@@ -9,13 +10,15 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "renderer.h"
 
+
+#include "InputHandler.h"
 #include "OpenGL/Shader.h"
 #include "OpenGL/VertexArrayObject.h"
 #include "OpenGL/VerticesMetaData.h"
 #include "Window.h"
 #include "Camera.h"
+
 
 
 
@@ -30,10 +33,14 @@ namespace RE {
     int Renderer::mainLoop() {
 
         {
+
             std::shared_ptr<Window> window = std::make_shared<Window>(800, 600, "Hello World!");
 
             window->initGLAD();
+            window->setInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             glfwSwapInterval(1);
+
+            InputHandler::GetInputHandlerInstance(window->getWindowRef());
 
             GLCall(glEnable(GL_DEPTH_TEST));
 
