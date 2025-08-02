@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core.h"
+#include "core/core.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
@@ -48,6 +48,11 @@ namespace RE {
 		static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 		{
 			InputHandler::GetInputHandlerInstance(window)->setCursorPos({xpos, ypos});
+		}
+
+		static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+		{
+			InputHandler::GetInputHandlerInstance(window)->setScrollOffset({ xoffset, yoffset });
 		}
 	};
 }

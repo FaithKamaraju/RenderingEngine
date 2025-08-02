@@ -1,5 +1,5 @@
 #pragma once
-#include "core.h"
+#include "core/core.h"
 #include "glad/glad.h"
 #include <iosfwd>
 #include <string>
@@ -36,7 +36,22 @@ namespace RE {
 		void setBool(const char* name, bool value) const;
 		void setInt(const char* name, int value) const;
 		void setFloat(const char* name, float value) const;
-		void setMatrix4fv(const char* name, size_t count, bool bTranspose, const float* value);
+
+		void setVec2(const char* name,int count, const int* value) const;
+		void setVec2(const char* name,int count, const unsigned int* value) const;
+		void setVec2(const char* name,int count, const float* value) const;
+									  
+		void setVec3(const char* name,int count, const int* value) const;
+		void setVec3(const char* name,int count, const unsigned int* value) const;
+		void setVec3(const char* name,int count, const float* value) const;
+									  
+		void setVec4(const char* name,int count, const int* value) const;
+		void setVec4(const char* name,int count, const unsigned int* value) const;
+		void setVec4(const char* name,int count, const float* value) const;
+
+		void setMatrix2fv(const char* name, int count, bool bTranspose, const float* value);
+		void setMatrix3fv(const char* name, int count, bool bTranspose, const float* value);
+		void setMatrix4fv(const char* name, int count, bool bTranspose, const float* value);
 
 	private:
 		ShaderSourceObject parseShaderSource(const char* path);

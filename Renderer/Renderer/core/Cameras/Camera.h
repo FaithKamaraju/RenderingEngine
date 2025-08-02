@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core.h"
+#include "core/core.h"
 
 #include <memory>
 
@@ -10,7 +10,7 @@
 
 #include "Window.h"
 #include "InputHandler.h"
-#include "Object.h"
+#include "core/Object.h"
 
 
 namespace RE {
@@ -21,8 +21,12 @@ namespace RE {
 		glm::vec3 m_cameraUp;
 		glm::mat4 m_view;
 		glm::mat4 m_projection;
+
+		
 		
 	private:
+
+		float m_cameraMoveSpeed;
 
 		float m_lastX, m_lastY;
 		bool m_bFirstMouse = false;
@@ -37,6 +41,7 @@ namespace RE {
 		void tick(float deltaTime) override;
 		void processInput(float deltaTime) override;
 		void cameraLook(double xpos, double ypos);
+		void scrollCameraMoveSpeed(double xOffset, double yOffset);
 		
 
 	};

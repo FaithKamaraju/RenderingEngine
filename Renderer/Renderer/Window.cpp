@@ -28,6 +28,7 @@ RE::Window::Window(int width, int height, const char* title)
     /* Make the window's context current */
     glfwMakeContextCurrent(m_Window);
     glfwSetCursorPosCallback(m_Window, mouse_callback);
+    glfwSetScrollCallback(m_Window, scroll_callback);
 
 }
 

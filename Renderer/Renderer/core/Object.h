@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core.h"
-#include "ObjectTransform.h"
+#include "core/core.h"
+#include "core/ObjectTransform.h"
 #include "glm/glm.hpp"
 
 namespace RE {

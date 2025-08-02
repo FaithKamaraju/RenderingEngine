@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core.h"
-#include "Object.h"
+#include "core/core.h"
+#include "core/Object.h"
 #include <mutex>
 #include <functional>
 #include <vector>
@@ -15,8 +15,14 @@ namespace RE {
 		double m_MouseCursor_y;
 	};
 
+	struct RE_API MouseScrollOffset {
+		double m_ScrollOffset_X;
+		double m_ScrollOffset_y;
+	};
+
 	typedef std::function<void()> func;
 	typedef std::function<void(const MouseCursorPos&)> MouseCursorCallback;
+	typedef std::function<void(const MouseScrollOffset&)> ScrollOffsetCallback;
 
 	
 
@@ -32,15 +38,21 @@ namespace RE {
 		inline void registerMouseCursorCallback(const MouseCursorCallback& funcPtr) {
 				m_MouseCallbackRegister.push_back(funcPtr);
 		}
-		//inline void unregisterCallback(const);
+		inline void registerScrollOffsetCallback(const ScrollOffsetCallback& funcPtr) {
+				m_ScrollOffsetRegister.push_back(funcPtr);
+		}
 
-		void setCursorPos(MouseCursorPos cursorPos);
+		void setCursorPos(const MouseCursorPos& cursorPos);
+		void setScrollOffset(const MouseScrollOffset& scrollOffset);
 
 	protected:
 		
 		GLFWwindow* m_WindowRef;
 		MouseCursorPos m_cursorPos;
+		MouseScrollOffset m_scrollOffset;
+
 		std::vector<MouseCursorCallback> m_MouseCallbackRegister;
+		std::vector<ScrollOffsetCallback> m_ScrollOffsetRegister;
 		
 		
 	private:

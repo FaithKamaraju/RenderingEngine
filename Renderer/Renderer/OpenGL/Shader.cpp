@@ -112,16 +112,73 @@ void RE::Shader::setBool(const char* name, bool value) const
 {
 	GLCall(glUniform1i(glGetUniformLocation(this->m_ShaderProgramID, name), (int)value));
 }
+
 void RE::Shader::setInt(const char* name, int value) const
 {
 	GLCall(glUniform1i(glGetUniformLocation(this->m_ShaderProgramID, name), value));
 }
+
 void RE::Shader::setFloat(const char* name, float value) const
 {
 	GLCall(glUniform1f(glGetUniformLocation(this->m_ShaderProgramID, name), value));
 }
 
-void RE::Shader::setMatrix4fv(const char* name, size_t count ,bool bTranspose ,const float* value)
+void RE::Shader::setVec2(const char* name, int count, const int* value) const
+{
+	GLCall(glUniform2iv(glGetUniformLocation(this->m_ShaderProgramID, name), count, value));
+}
+
+void RE::Shader::setVec2(const char* name, int count, const unsigned int* value) const
+{
+	GLCall(glUniform2uiv(glGetUniformLocation(this->m_ShaderProgramID, name), count, value));
+}
+
+void RE::Shader::setVec2(const char* name, int count, const float* value) const
+{
+	GLCall(glUniform2fv(glGetUniformLocation(this->m_ShaderProgramID, name), count, value));
+}
+
+void RE::Shader::setVec3(const char* name, int count, const int* value) const
+{
+	GLCall(glUniform3iv(glGetUniformLocation(this->m_ShaderProgramID, name), count, value));
+}
+
+void RE::Shader::setVec3(const char* name, int count, const unsigned int* value) const
+{
+	GLCall(glUniform3uiv(glGetUniformLocation(this->m_ShaderProgramID, name), count, value));
+}
+
+void RE::Shader::setVec3(const char* name, int count, const float* value) const
+{
+	GLCall(glUniform3fv(glGetUniformLocation(this->m_ShaderProgramID, name), count, value));
+}
+
+void RE::Shader::setVec4(const char* name, int count, const int* value) const
+{
+	GLCall(glUniform4iv(glGetUniformLocation(this->m_ShaderProgramID, name), count, value));
+}
+
+void RE::Shader::setVec4(const char* name, int count, const unsigned int* value) const
+{
+	GLCall(glUniform4uiv(glGetUniformLocation(this->m_ShaderProgramID, name), count, value));
+}
+
+void RE::Shader::setVec4(const char* name, int count, const float* value) const
+{
+	GLCall(glUniform4fv(glGetUniformLocation(this->m_ShaderProgramID, name), count, value));
+}
+
+void RE::Shader::setMatrix2fv(const char* name, int count, bool bTranspose, const float* value)
+{
+	GLCall(glUniformMatrix2fv(glGetUniformLocation(this->m_ShaderProgramID, name), count, bTranspose, value));
+}
+
+void RE::Shader::setMatrix3fv(const char* name, int count, bool bTranspose, const float* value)
+{
+	GLCall(glUniformMatrix3fv(glGetUniformLocation(this->m_ShaderProgramID, name), count, bTranspose, value));
+}
+
+void RE::Shader::setMatrix4fv(const char* name, int count ,bool bTranspose ,const float* value)
 {
 	GLCall(glUniformMatrix4fv(glGetUniformLocation(this->m_ShaderProgramID, name), count, bTranspose, value));
 }

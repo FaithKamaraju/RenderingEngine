@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core.h"
+#include "core/core.h"
 #include "glad/glad.h"
 
 namespace RE {
