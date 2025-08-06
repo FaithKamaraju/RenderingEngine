@@ -10,12 +10,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "core/Constants.h"
 #include "InputHandler.h"
 #include "OpenGL/Shader.h"
 #include "OpenGL/VertexArrayObject.h"
 #include "OpenGL/VerticesMetaData.h"
 #include "Window.h"
 #include "core/Cameras/Camera.h"
+#include "core/Lights/DirectionalLight.h"
 
 
 unsigned int loadTexture(char const* path)
@@ -132,49 +134,48 @@ namespace RE {
             attr[2] = VertexAttribute(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))); // texCoord attr
             //attr[1] = VertexAttribute(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))); // texCoord attr
 
+            DirectionalLight dirLight;
+            dirLight.setPositionGlobal(5.f, 5.0f, 5.0f);
+
             VertexArrayObject VAO;
             VAO.Bind();
             VAO.BindVertexBuffer(vertices, sizeof(vertices), attr, sizeof(attr) / sizeof(VertexAttribute), GL_STATIC_DRAW);
             //vao[0].BindElementBuffer(indices, sizeof(indices), GL_STATIC_DRAW);
             VAO.UnBind();
 
-            Shader lightShader;
-            lightShader.AttachShaders("Resources/Shaders/LightSource.shader");
-            lightShader.UseShaderProgram();
-            glm::vec3 lightColor = glm::vec3(1.f);
-            lightShader.setVec3("lightColor", 1, glm::value_ptr(lightColor));
-            glm::mat4 lightSourceMT = glm::mat4(1.0f);
-            
-            glm::vec3 lightPos = glm::vec3(1.2f, 1.0f, 2.0f);
-            lightSourceMT = glm::translate(lightSourceMT, lightPos);
-            lightSourceMT = glm::scale(lightSourceMT, glm::vec3(0.2f, 0.2f, 0.2f));
-
-
             Shader containerShader;
             containerShader.AttachShaders("Resources/Shaders/BasicShader.shader");
             containerShader.UseShaderProgram();
-            //glm::vec3 containerColor = glm::vec3(1.0f, 0.5f, 0.31f);
-            //containerShader.setVec3("objectColor", 1, glm::value_ptr(containerColor));
-            //containerShader.setVec3("lightColor", 1, glm::value_ptr(lightColor));
-            //containerShader.setVec3("lightPos", 1, glm::value_ptr(lightPos));
-
-            //containerShader.setVec3("material.ambient", 1, glm::value_ptr(glm::vec3(1.0f, 0.5f, 0.31f)));
             containerShader.setInt("material.diffuseMap", 0);
             containerShader.setInt("material.specularMap", 1);
             containerShader.setFloat("material.shininess", 32.0f);
 
-            containerShader.setVec3("light.position", 1, glm::value_ptr(lightPos));
-            containerShader.setVec3("light.ambient", 1, glm::value_ptr(glm::vec3(0.1f, 0.1f, 0.1f)));
-            containerShader.setVec3("light.diffuse", 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
-            containerShader.setVec3("light.specular", 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+            GLCall(unsigned int MatricesBlockIndex = glGetUniformBlockIndex(containerShader.m_ShaderProgramID, "Matrices"));
+            GLCall(glUniformBlockBinding(containerShader.m_ShaderProgramID, MatricesBlockIndex, GlobalMatricesBindingPointIndex));
+
+            GLCall(unsigned int DirLightBlockIndex = glGetUniformBlockIndex(containerShader.m_ShaderProgramID, "DirectionalLight"));
+            GLCall(glUniformBlockBinding(containerShader.m_ShaderProgramID, DirLightBlockIndex, GlobalDirLightBindingPointIndex));
+
+            unsigned int MatricesUBO;
+            GLCall(glGenBuffers(1, &MatricesUBO));
+            GLCall(glBindBuffer(GL_UNIFORM_BUFFER, MatricesUBO));
+            GLCall(glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, NULL, GL_STREAM_DRAW));
+            GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, GlobalMatricesBindingPointIndex,
+                MatricesUBO, 0, sizeof(glm::mat4) * 2));
+            GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
+
+            
 
             glm::mat4 containerModelMT = glm::mat4(1.0f);
             glm::mat3 containerNormalMT = glm::mat3(glm::transpose(glm::inverse(containerModelMT)));
 
-
           
             std::unique_ptr<Camera> camera = std::make_unique<Camera>(window, 60.0f);
-            camera->translate(0.0f, 0.0f, 5.0f);
+            camera->translateGlobal(0.0f, 0.0f, 5.0f);
+
+            glBindBuffer(GL_UNIFORM_BUFFER, MatricesUBO);
+            glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(camera->m_projection));
+            glBindBuffer(GL_UNIFORM_BUFFER, 0);
             
             
             float deltaTime = 0.0f;	// Time between current frame and last frame
@@ -192,31 +193,37 @@ namespace RE {
                 camera->processInput(deltaTime);
 
                 camera->tick(deltaTime);
+                
 
                 /* Render here */
-                GLCall(glClearColor(0.2f, 0.3f, 0.3f, 1.0f));
+                GLCall(glClearColor(0.0f, 0.0f, 0.0f, 0.0f));
                 GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
+               
+
+                GLCall(glBindBuffer(GL_UNIFORM_BUFFER, MatricesUBO));
+                GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(camera->m_view)));
+                GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 
                 VAO.Bind();
                 containerShader.UseShaderProgram();
+                /*containerShader.setVec3("dirLight.position", 1, glm::value_ptr(dirLight.transform.globalPosition));*/
                 containerShader.setMatrix4fv("model", 1, false, glm::value_ptr(containerModelMT));
-                containerShader.setMatrix4fv("view", 1, false, glm::value_ptr(camera->m_view));
-                containerShader.setMatrix4fv("projection", 1, false, glm::value_ptr(camera->m_projection));
                 containerShader.setMatrix3fv("normalMatrix", 1, false, glm::value_ptr(containerNormalMT));
-                containerShader.setVec3("cameraPos", 1, glm::value_ptr(camera->getTransform().position));
+                containerShader.setVec3("cameraPos", 1, glm::value_ptr(camera->getTransform().globalPosition));
                 glActiveTexture(GL_TEXTURE0);
                 glBindTexture(GL_TEXTURE_2D, diffuseMap);
                 glActiveTexture(GL_TEXTURE1);
                 glBindTexture(GL_TEXTURE_2D, specularMap);
                 glDrawArrays(GL_TRIANGLES, 0, 36);
+                glFinish();
 
-                lightShader.UseShaderProgram();
-                lightShader.setMatrix4fv("model", 1, false, glm::value_ptr(lightSourceMT));
-                lightShader.setMatrix4fv("view", 1, false, glm::value_ptr(camera->m_view));
-                lightShader.setMatrix4fv("projection", 1, false, glm::value_ptr(camera->m_projection));
+                dirLight.tick(deltaTime);
+                dirLight.setUniforms();
+                //dirLight.m_shaderID.UseShaderProgram();
                 glDrawArrays(GL_TRIANGLES, 0, 36);
 
+                glFinish();
 
                 window->swapBuffers();
 

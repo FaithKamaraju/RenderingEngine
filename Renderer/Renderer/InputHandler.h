@@ -61,7 +61,8 @@ namespace RE {
 
 		inline InputHandler(GLFWwindow* windowRef) :
 			m_WindowRef(windowRef), 
-			m_cursorPos(0.0, 0.0){};
+			m_cursorPos(0.0, 0.0),
+			m_scrollOffset(0.0, 0.0) {};
 
 
 	};
