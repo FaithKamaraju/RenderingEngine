@@ -14,12 +14,13 @@ namespace RE {
 		ObjectTransform transform;
 	protected:
 		glm::mat4 m_modelMatrix;
-
+		glm::mat4 m_modelMatrixLocal;
 	public:
 		Object();
 
 		ObjectTransform getTransform();
 		glm::mat4 getModelMT() const;
+		glm::mat4 getModelMTLocal() const;
 		void setTransform(const ObjectTransform& otherTransform);
 
 		void setPositionLocal(float x, float y, float z);
@@ -27,6 +28,7 @@ namespace RE {
 		void setRotationLocal(float pitch, float yaw, float roll);
 		void setRotationGlobal(float pitch, float yaw, float roll);
 		void setScale(float x, float y, float z);
+		void setScale(float scale);
 
 		void translateLocal(float x, float y, float z);
 		void translateLocal(glm::vec3 translateBy);

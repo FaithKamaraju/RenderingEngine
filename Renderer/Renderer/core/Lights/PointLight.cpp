@@ -1,11 +1,13 @@
-#include "DirectionalLight.h"
+#include "PointLight.h"
 #include "core/Constants.h"
-#include <iostream>
 
-RE::DirectionalLight::DirectionalLight()
-    :ambient(0.1f), diffuse(1.f), specular(1.f)
+
+RE::PointLight::PointLight()
+	:ambient(0.1f), diffuse(1.f), specular(1.f)
 {
-    transform.rotation = glm::vec3(0.0f);
+    constant = 1.f;
+    linear = 0.045f;
+    quadratic = 0.0075f;
 
     constexpr float vertices[] = {
         // positions          // normals           // texture coords
@@ -62,49 +64,34 @@ RE::DirectionalLight::DirectionalLight()
     m_shaderID.UseShaderProgram();
     m_shaderID.setVec3("lightColor", 1, glm::value_ptr(m_lightColor));
 
-    direction = glm::vec3(-1.f);
 
-    GLCall(glGenBuffers(1, &DirLightUBO));
-    GLCall(glBindBuffer(GL_UNIFORM_BUFFER, DirLightUBO));
-    GLCall(glBufferData(GL_UNIFORM_BUFFER, 64, NULL, GL_DYNAMIC_DRAW));
-    GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, BPI_DirLight, DirLightUBO, 0, 64));
-    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0 , 16, glm::value_ptr(direction)));
-    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 16, 16, glm::value_ptr(ambient)));
-    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 32, 16, glm::value_ptr(diffuse)));
-    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 48, 16, glm::value_ptr(specular)));
+
+    GLCall(glGenBuffers(1, &PointLightUBO));
+    GLCall(glBindBuffer(GL_UNIFORM_BUFFER, PointLightUBO));
+    GLCall(glBufferData(GL_UNIFORM_BUFFER, 76, NULL, GL_DYNAMIC_DRAW));
+    GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, BPI_PointLights, PointLightUBO, 0, 76));
+    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0  , 16, glm::value_ptr(transform.globalPosition)));
+    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 16 , 16, glm::value_ptr(ambient)));
+    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 32 , 16, glm::value_ptr(diffuse)));
+    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 48 , 16, glm::value_ptr(specular)));
+    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 64 ,  4, &constant));
+    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 68 ,  4, &linear));
+    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 72 ,  4, &quadratic));
     GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 
-     GLCall(unsigned int MatricesBlockIndex = glGetUniformBlockIndex(m_shaderID.m_ShaderProgramID, "Matrices"));
-     GLCall(glUniformBlockBinding(m_shaderID.m_ShaderProgramID, MatricesBlockIndex, BPI_GlobalCameraMatrices));
-
-
-     
+    GLCall(unsigned int MatricesBlockIndex = glGetUniformBlockIndex(m_shaderID.m_ShaderProgramID, "Matrices"));
+    GLCall(glUniformBlockBinding(m_shaderID.m_ShaderProgramID, MatricesBlockIndex, BPI_GlobalCameraMatrices));
 }
 
-void RE::DirectionalLight::tick(float deltaTime)
+void RE::PointLight::tick(float deltaTime)
 {
-    /*rotateLocal(0.0f, 0.0f, 25.f * deltaTime);
-    direction = glm::vec3(0.0f, -1.f, 0.0f);
-    direction = this->m_modelMatrixLocal * glm::vec4(direction, 1.0f);
-    direction = glm::normalize(direction);
-    GLCall(glNamedBufferSubData(DirLightUBO, 0, sizeof(glm::vec4), glm::value_ptr(direction)));*/
 }
-    
 
-void RE::DirectionalLight::processInput(float deltaTime)
+void RE::PointLight::processInput(float deltaTime)
 {
-    
 }
 
-void RE::DirectionalLight::updateDirection()
-{
-    direction = glm::vec3(0.0f, -1.f, 0.0f);
-    direction = this->m_modelMatrixLocal * glm::vec4(direction, 1.0f);
-    direction = glm::normalize(direction);
-    glNamedBufferSubData(DirLightUBO, 0, sizeof(glm::vec4), glm::value_ptr(direction));
-}
-
-void RE::DirectionalLight::setUniforms()
+void RE::PointLight::setUniforms()
 {
     m_shaderID.UseShaderProgram();
     m_shaderID.setMatrix4fv("model", 1, false, glm::value_ptr(m_modelMatrix));

@@ -2,7 +2,7 @@
 
 
 RE::Object::Object()
-	: transform(), m_modelMatrix(1.f)
+	: transform(), m_modelMatrix(1.f), m_modelMatrixLocal(1.f)
 {
 }
 
@@ -15,6 +15,11 @@ RE::ObjectTransform RE::Object::getTransform()
 glm::mat4 RE::Object::getModelMT() const
 {
 	return this->m_modelMatrix;
+}
+
+glm::mat4 RE::Object::getModelMTLocal() const
+{
+	return this->m_modelMatrixLocal;
 }
 
 void RE::Object::setTransform(const ObjectTransform& otherTransform)
@@ -61,13 +66,19 @@ void RE::Object::setRotationGlobal(float pitch, float yaw, float roll)
 		transform.globalRotation.z = (int)transform.globalRotation.z % 360;
 	_updateModelMatrix();
 }
-
 void RE::Object::setScale(float x, float y, float z)
 {
 	this->transform.scale = { x, y, z };
 
 	_updateModelMatrix();
 }
+void RE::Object::setScale(float scale)
+{
+	this->transform.scale = glm::vec3(scale);
+
+	_updateModelMatrix();
+}
+
 
 void RE::Object::translateLocal(float x, float y, float z)
 {
@@ -144,16 +155,27 @@ void RE::Object::rotateGlobal(glm::vec3 rotateBy)
 void RE::Object::_updateModelMatrix()
 {
 	m_modelMatrix = glm::mat4(1.f);
+	m_modelMatrixLocal = glm::mat4(1.f);
+
 	m_modelMatrix = glm::rotate(m_modelMatrix, glm::radians(transform.globalRotation.x), glm::vec3(1.f, 0.f, 0.f));
 	m_modelMatrix = glm::rotate(m_modelMatrix, glm::radians(transform.globalRotation.y), glm::vec3(0.f, 1.f, 0.f));
 	m_modelMatrix = glm::rotate(m_modelMatrix, glm::radians(transform.globalRotation.z), glm::vec3(0.f, 0.f, 1.f));
 	transform.globalPosition = m_modelMatrix * glm::vec4(transform.globalPosition, 1.f);
 	m_modelMatrix = glm::translate(m_modelMatrix, transform.globalPosition);
+
 	m_modelMatrix = glm::translate(m_modelMatrix, transform.position);
+	m_modelMatrixLocal = glm::translate(m_modelMatrixLocal, transform.position);
+
 	m_modelMatrix = glm::rotate(m_modelMatrix, glm::radians(transform.rotation.x), glm::vec3(1.f, 0.f, 0.f));
 	m_modelMatrix = glm::rotate(m_modelMatrix, glm::radians(transform.rotation.y), glm::vec3(0.f, 1.f, 0.f));
 	m_modelMatrix = glm::rotate(m_modelMatrix, glm::radians(transform.rotation.z), glm::vec3(0.f, 0.f, 1.f));
+
+	m_modelMatrixLocal = glm::rotate(m_modelMatrixLocal, glm::radians(transform.rotation.x), glm::vec3(1.f, 0.f, 0.f));
+	m_modelMatrixLocal = glm::rotate(m_modelMatrixLocal, glm::radians(transform.rotation.y), glm::vec3(0.f, 1.f, 0.f));
+	m_modelMatrixLocal = glm::rotate(m_modelMatrixLocal, glm::radians(transform.rotation.z), glm::vec3(0.f, 0.f, 1.f));
+
 	m_modelMatrix = glm::scale(m_modelMatrix, transform.scale);
+	m_modelMatrixLocal = glm::scale(m_modelMatrixLocal, transform.scale);
 
 	
 }

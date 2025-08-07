@@ -366,3 +366,5 @@ FodyWeavers.xsd
 *.vcxproj.*
 *.sln
 bin-int/
+Sandbox/Renderer.dll
+Sandbox/Sandbox.exe
