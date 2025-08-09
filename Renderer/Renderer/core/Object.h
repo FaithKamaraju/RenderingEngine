@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/core.h"
+#include "OpenGL/Shader.h"
 #include "core/ObjectTransform.h"
 #include "glm/glm.hpp"
 #include <glm/gtc/matrix_transform.hpp>
@@ -15,6 +16,7 @@ namespace RE {
 	protected:
 		glm::mat4 m_modelMatrix;
 		glm::mat4 m_modelMatrixLocal;
+		Shader m_shaderID;
 	public:
 		Object();
 
@@ -39,6 +41,8 @@ namespace RE {
 		void rotateLocal(glm::vec3 rotateBy);
 		void rotateGlobal(float pitch, float yaw, float roll);
 		void rotateGlobal(glm::vec3 rotateBy);
+
+		void render();
 
 		virtual void tick(float deltaTime) = 0;
 		virtual void processInput(float deltaTime) = 0;

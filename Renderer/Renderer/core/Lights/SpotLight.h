@@ -1,7 +1,5 @@
 #pragma once
-
 #include "core/core.h"
-
 #include "core/Object.h"
 #include "OpenGL/VertexArrayObject.h"
 #include "OpenGL/Shader.h"
@@ -14,30 +12,33 @@
 
 
 namespace RE {
-	class RE_API DirectionalLight : public Object
+
+	class RE_API SpotLight : public Object
 	{
-	public:
+    public:
         glm::vec3 m_lightColor = glm::vec3(1.f);
         glm::vec3 direction;
         glm::vec3 ambient;
         glm::vec3 diffuse;
         glm::vec3 specular;
-        unsigned int DirLightUBO;
+        float innerangle;
+        float outerangle;
+        float constant;
+        float linear;
+        float quadratic;
 
     private:
+
         VertexArrayObject m_VAOId;
 
     public:
-        DirectionalLight();
+        SpotLight();
 
         void tick(float deltaTime) override;
         void processInput(float deltaTime) override;
 
-        void updateDirection();
-
-        //void setUniforms();
+        /*void setUniforms();*/
 	};
 }
-
 
 

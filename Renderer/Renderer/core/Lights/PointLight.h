@@ -20,8 +20,6 @@ namespace RE {
         float constant;
         float linear;
         float quadratic;
-        Shader m_shaderID;
-        unsigned int PointLightUBO;
 
     private:
         
@@ -33,7 +31,7 @@ namespace RE {
         void tick(float deltaTime) override;
         void processInput(float deltaTime) override;
 
-        void setUniforms();
+        //void setUniforms();
 	};
 }
 

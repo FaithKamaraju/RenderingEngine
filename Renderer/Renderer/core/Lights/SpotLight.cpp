@@ -1,12 +1,14 @@
-#include "DirectionalLight.h"
+#include "SpotLight.h"
 #include "core/Constants.h"
-#include <iostream>
+#include "core/Lights/LightUBOManager.h"
 
-RE::DirectionalLight::DirectionalLight()
-    :direction(-1.f), ambient(0.1f), diffuse(1.f), specular(1.f)
+
+RE::SpotLight::SpotLight()
+    :direction(0.0f, -1.f, 0.0f), ambient(0.1f), diffuse(1.f), specular(1.f), innerangle(glm::radians(10.f)), outerangle(glm::radians(20.f))
 {
-    transform.rotation = glm::vec3(0.0f);
-
+    constant = 1.f;
+    linear = 0.045f;
+    quadratic = 0.0075f;
     constexpr float vertices[] = {
         // positions          // normals           // texture coords
         -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
@@ -62,50 +64,39 @@ RE::DirectionalLight::DirectionalLight()
     m_shaderID.UseShaderProgram();
     m_shaderID.setVec3("lightColor", 1, glm::value_ptr(m_lightColor));
 
-    GLCall(glGenBuffers(1, &DirLightUBO));
-    GLCall(glBindBuffer(GL_UNIFORM_BUFFER, DirLightUBO));
-    GLCall(glBufferData(GL_UNIFORM_BUFFER, 64, NULL, GL_DYNAMIC_DRAW));
-    GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, BPI_DirLight, DirLightUBO, 0, 64));
-    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0 , 16, glm::value_ptr(direction)));
-    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 16, 16, glm::value_ptr(ambient)));
-    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 32, 16, glm::value_ptr(diffuse)));
-    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 48, 16, glm::value_ptr(specular)));
-    GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
+    float innerCutoff = glm::cos(innerangle);
+    float outerCutoff = glm::cos(outerangle);
+    setPositionGlobal(0.0f, 8.f, 0.0f);
 
-     GLCall(unsigned int MatricesBlockIndex = glGetUniformBlockIndex(m_shaderID.m_ShaderProgramID, "Matrices"));
-     GLCall(glUniformBlockBinding(m_shaderID.m_ShaderProgramID, MatricesBlockIndex, BPI_GlobalCameraMatrices));
+    SpotLightStruct info;
+    info.position = glm::vec4(transform.globalPosition,1.f);	
+    info.direction = glm::vec4(direction, 1.f);
+    info.ambient = glm::vec4(ambient, 1.f);
+    info.diffuse = glm::vec4(diffuse,1.f);		
+    info.specular = glm::vec4(specular, 1.f);
+    info.innerCutoff = innerCutoff;		
+    info.outerCutoff = outerCutoff;		
+    info.constant = constant;			
+    info.linear = linear;			
+    info.quadratic = quadratic;
+    LightUBOManager::GetInstance()->addSpotLightToMemory(info);
 
-
-     
+    GLCall(unsigned int MatricesBlockIndex = glGetUniformBlockIndex(m_shaderID.m_ShaderProgramID, "Matrices"));
+    GLCall(glUniformBlockBinding(m_shaderID.m_ShaderProgramID, MatricesBlockIndex, BPI_GlobalCameraMatrices));
 }
 
-void RE::DirectionalLight::tick(float deltaTime)
+void RE::SpotLight::tick(float deltaTime)
 {
-    /*rotateLocal(0.0f, 0.0f, 25.f * deltaTime);
-    direction = glm::vec3(0.0f, -1.f, 0.0f);
-    direction = this->m_modelMatrixLocal * glm::vec4(direction, 1.0f);
-    direction = glm::normalize(direction);
-    GLCall(glNamedBufferSubData(DirLightUBO, 0, sizeof(glm::vec4), glm::value_ptr(direction)));*/
 }
-    
 
-void RE::DirectionalLight::processInput(float deltaTime)
+void RE::SpotLight::processInput(float deltaTime)
 {
-    
 }
 
-void RE::DirectionalLight::updateDirection()
-{
-    direction = glm::vec3(0.0f, -1.f, 0.0f);
-    direction = this->m_modelMatrixLocal * glm::vec4(direction, 1.0f);
-    direction = glm::normalize(direction);
-    glNamedBufferSubData(DirLightUBO, 0, sizeof(glm::vec4), glm::value_ptr(direction));
-}
-
-//void RE::DirectionalLight::setUniforms()
+//void RE::SpotLight::setUniforms() 
 //{
 //    m_shaderID.UseShaderProgram();
 //    m_shaderID.setMatrix4fv("model", 1, false, glm::value_ptr(m_modelMatrix));
-//    //m_shaderID.setMatrix4fv("view", 1, false, glm::value_ptr(view));
-//    //m_shaderID.setMatrix4fv("projection", 1, false, glm::value_ptr(projection));
 //}
+
+

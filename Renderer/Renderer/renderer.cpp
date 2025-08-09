@@ -19,6 +19,7 @@
 #include "core/Cameras/Camera.h"
 #include "core/Lights/DirectionalLight.h"
 #include "core/Lights/PointLight.h"
+#include "core/Lights/SpotLight.h"
 
 
 unsigned int loadTexture(char const* path)
@@ -133,20 +134,21 @@ namespace RE {
             attr[0] = VertexAttribute(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);                       // position attr
             attr[1] = VertexAttribute(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));     // normal attr
             attr[2] = VertexAttribute(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))); // texCoord attr
-            //attr[1] = VertexAttribute(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))); // texCoord attr
 
             DirectionalLight dirLight;
-            dirLight.setPositionGlobal(5.f, 5.0f, 5.0f);
+            dirLight.setPositionGlobal(10.f,10.f,10.f);
+
             PointLight pointLight;
-            pointLight.setPositionGlobal(5.f, 2.0f, 0.0f);
-            GLCall(glNamedBufferSubData(pointLight.PointLightUBO, 0, sizeof(glm::vec4), glm::value_ptr(pointLight.transform.globalPosition)));
-            //pointLight.setScale(0.2f);
+            //pointLight.setPositionGlobal(6.f, 4.0f, 0.0f);
+           /* GLCall(glNamedBufferSubData(pointLight.PointLightUBO, 0, sizeof(glm::vec4), glm::value_ptr(pointLight.transform.globalPosition)));*/
+            SpotLight spotLight;
+            //spotLight.setPositionGlobal(0.0f, 8.f, 0.0f);
+            /*GLCall(glNamedBufferSubData(spotLight.SpotLightUBO, 0, sizeof(glm::vec4), glm::value_ptr(spotLight.transform.globalPosition)));*/
 
 
             VertexArrayObject VAO;
             VAO.Bind();
             VAO.BindVertexBuffer(vertices, sizeof(vertices), attr, sizeof(attr) / sizeof(VertexAttribute), GL_STATIC_DRAW);
-            //vao[0].BindElementBuffer(indices, sizeof(indices), GL_STATIC_DRAW);
             VAO.UnBind();
 
             Shader containerShader;
@@ -162,8 +164,8 @@ namespace RE {
             GLCall(unsigned int DirLightBlockIndex = glGetUniformBlockIndex(containerShader.m_ShaderProgramID, "DirectionalLight"));
             GLCall(glUniformBlockBinding(containerShader.m_ShaderProgramID, DirLightBlockIndex, BPI_DirLight));
 
-            GLCall(unsigned int PointLightBlockIndex = glGetUniformBlockIndex(containerShader.m_ShaderProgramID, "PointLight"));
-            GLCall(glUniformBlockBinding(containerShader.m_ShaderProgramID, PointLightBlockIndex, BPI_PointLights));
+            GLCall(unsigned int LightsBlockIndex = glGetUniformBlockIndex(containerShader.m_ShaderProgramID, "Lights"));
+            GLCall(glUniformBlockBinding(containerShader.m_ShaderProgramID, LightsBlockIndex, BPI_Lights));
 
             unsigned int MatricesUBO;
             GLCall(glGenBuffers(1, &MatricesUBO));
@@ -176,11 +178,12 @@ namespace RE {
             
 
             glm::mat4 containerModelMT = glm::mat4(1.0f);
+            containerModelMT = glm::scale(containerModelMT, glm::vec3(5.f));
             glm::mat3 containerNormalMT = glm::mat3(glm::transpose(glm::inverse(containerModelMT)));
 
           
             std::unique_ptr<Camera> camera = std::make_unique<Camera>(window, 60.0f);
-            camera->translateGlobal(0.0f, 0.0f, 5.0f);
+            camera->translateGlobal(0.0f, 0.0f, 10.0f);
 
             GLCall(glBindBuffer(GL_UNIFORM_BUFFER, MatricesUBO));
             GLCall(glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(camera->m_projection)));
@@ -224,15 +227,10 @@ namespace RE {
                 GLCall(glBindTexture(GL_TEXTURE_2D, specularMap));
                 GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
 
-                dirLight.tick(deltaTime);
-                dirLight.setUniforms();
-                //dirLight.m_shaderID.UseShaderProgram();
-                GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
-
-                //dirLight.tick(deltaTime);
-                pointLight.setUniforms();
-                //dirLight.m_shaderID.UseShaderProgram();
-                glDrawArrays(GL_TRIANGLES, 0, 36);
+                dirLight.render();
+                pointLight.render();
+                spotLight.render();
+                
 
                 window->swapBuffers();
 

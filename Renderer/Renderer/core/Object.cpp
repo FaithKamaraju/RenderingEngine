@@ -152,6 +152,7 @@ void RE::Object::rotateGlobal(glm::vec3 rotateBy)
 	_updateModelMatrix();
 }
 
+
 void RE::Object::_updateModelMatrix()
 {
 	m_modelMatrix = glm::mat4(1.f);
@@ -180,3 +181,9 @@ void RE::Object::_updateModelMatrix()
 	
 }
 
+void RE::Object::render()
+{
+	m_shaderID.UseShaderProgram();
+	m_shaderID.setMatrix4fv("model", 1, false, glm::value_ptr(m_modelMatrix));
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+}

@@ -1,13 +1,15 @@
 #include "PointLight.h"
 #include "core/Constants.h"
+#include "core/Lights/LightUBOManager.h"
 
 
 RE::PointLight::PointLight()
-	:ambient(0.1f), diffuse(1.f), specular(1.f)
+	:ambient(0.1f), diffuse(2.f), specular(2.f)
 {
-    constant = 1.f;
-    linear = 0.045f;
-    quadratic = 0.0075f;
+    		
+    constant = 1.0f;
+    linear = 0.022f;
+    quadratic = 0.0019f;
 
     constexpr float vertices[] = {
         // positions          // normals           // texture coords
@@ -64,20 +66,16 @@ RE::PointLight::PointLight()
     m_shaderID.UseShaderProgram();
     m_shaderID.setVec3("lightColor", 1, glm::value_ptr(m_lightColor));
 
-
-
-    GLCall(glGenBuffers(1, &PointLightUBO));
-    GLCall(glBindBuffer(GL_UNIFORM_BUFFER, PointLightUBO));
-    GLCall(glBufferData(GL_UNIFORM_BUFFER, 76, NULL, GL_DYNAMIC_DRAW));
-    GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, BPI_PointLights, PointLightUBO, 0, 76));
-    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0  , 16, glm::value_ptr(transform.globalPosition)));
-    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 16 , 16, glm::value_ptr(ambient)));
-    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 32 , 16, glm::value_ptr(diffuse)));
-    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 48 , 16, glm::value_ptr(specular)));
-    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 64 ,  4, &constant));
-    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 68 ,  4, &linear));
-    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 72 ,  4, &quadratic));
-    GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
+    setPositionGlobal(6.f, 4.0f, 0.0f);
+    PointLightStruct info;
+    info.position = glm::vec4(transform.globalPosition, 1.f);
+    info.ambient = glm::vec4(ambient, 1.f);
+    info.diffuse = glm::vec4(diffuse, 1.f);
+    info.specular = glm::vec4(specular, 1.f);
+    info.constant = constant;
+    info.linear = linear;
+    info.quadratic = quadratic;
+    LightUBOManager::GetInstance()->addPointLightToMemory(info);
 
     GLCall(unsigned int MatricesBlockIndex = glGetUniformBlockIndex(m_shaderID.m_ShaderProgramID, "Matrices"));
     GLCall(glUniformBlockBinding(m_shaderID.m_ShaderProgramID, MatricesBlockIndex, BPI_GlobalCameraMatrices));
@@ -91,10 +89,10 @@ void RE::PointLight::processInput(float deltaTime)
 {
 }
 
-void RE::PointLight::setUniforms()
-{
-    m_shaderID.UseShaderProgram();
-    m_shaderID.setMatrix4fv("model", 1, false, glm::value_ptr(m_modelMatrix));
-    //m_shaderID.setMatrix4fv("view", 1, false, glm::value_ptr(view));
-    //m_shaderID.setMatrix4fv("projection", 1, false, glm::value_ptr(projection));
-}
+//void RE::PointLight::setUniforms()
+//{
+//    m_shaderID.UseShaderProgram();
+//    m_shaderID.setMatrix4fv("model", 1, false, glm::value_ptr(m_modelMatrix));
+//    //m_shaderID.setMatrix4fv("view", 1, false, glm::value_ptr(view));
+//    //m_shaderID.setMatrix4fv("projection", 1, false, glm::value_ptr(projection));
+//}
