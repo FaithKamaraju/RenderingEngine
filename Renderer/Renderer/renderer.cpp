@@ -20,6 +20,35 @@
 #include "core/Lights/DirectionalLight.h"
 #include "core/Lights/PointLight.h"
 #include "core/Lights/SpotLight.h"
+#include <assimp/Importer.hpp>      // C++ importer interface
+#include <assimp/scene.h>           // Output data structure
+#include <assimp/postprocess.h>     // Post processing flags
+
+bool DoTheImportThing(const std::string& pFile) {
+    // Create an instance of the Importer class
+    Assimp::Importer importer;
+
+    // And have it read the given file with some example postprocessing
+    // Usually - if speed is not the most important aspect for you - you'll
+    // probably to request more postprocessing than we do in this example.
+    const aiScene* scene = importer.ReadFile(pFile,
+        aiProcess_CalcTangentSpace |
+        aiProcess_Triangulate |
+        aiProcess_JoinIdenticalVertices |
+        aiProcess_SortByPType);
+
+    // If the import failed, report it
+    if (nullptr == scene) {
+        //DoTheErrorLogging(importer.GetErrorString());
+        return false;
+    }
+
+    // Now we can access the file's contents.
+    //DoTheSceneProcessing(scene);
+
+    // We're done. Everything will be cleaned up by the importer destructor
+    return true;
+}
 
 
 unsigned int loadTexture(char const* path)
@@ -135,15 +164,7 @@ namespace RE {
             attr[1] = VertexAttribute(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));     // normal attr
             attr[2] = VertexAttribute(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))); // texCoord attr
 
-            DirectionalLight dirLight;
-            dirLight.setPositionGlobal(10.f,10.f,10.f);
-
-            PointLight pointLight;
-            //pointLight.setPositionGlobal(6.f, 4.0f, 0.0f);
-           /* GLCall(glNamedBufferSubData(pointLight.PointLightUBO, 0, sizeof(glm::vec4), glm::value_ptr(pointLight.transform.globalPosition)));*/
-            SpotLight spotLight;
-            //spotLight.setPositionGlobal(0.0f, 8.f, 0.0f);
-            /*GLCall(glNamedBufferSubData(spotLight.SpotLightUBO, 0, sizeof(glm::vec4), glm::value_ptr(spotLight.transform.globalPosition)));*/
+            
 
 
             VertexArrayObject VAO;
@@ -158,7 +179,7 @@ namespace RE {
             containerShader.setInt("material.specularMap", 1);
             containerShader.setFloat("material.shininess", 32.0f);
 
-            GLCall(unsigned int MatricesBlockIndex = glGetUniformBlockIndex(containerShader.m_ShaderProgramID, "Matrices"));
+            GLCall(unsigned int MatricesBlockIndex = glGetUniformBlockIndex(containerShader.m_ShaderProgramID, "CameraData"));
             GLCall(glUniformBlockBinding(containerShader.m_ShaderProgramID, MatricesBlockIndex, BPI_GlobalCameraMatrices));
 
             GLCall(unsigned int DirLightBlockIndex = glGetUniformBlockIndex(containerShader.m_ShaderProgramID, "DirectionalLight"));
@@ -167,60 +188,48 @@ namespace RE {
             GLCall(unsigned int LightsBlockIndex = glGetUniformBlockIndex(containerShader.m_ShaderProgramID, "Lights"));
             GLCall(glUniformBlockBinding(containerShader.m_ShaderProgramID, LightsBlockIndex, BPI_Lights));
 
-            unsigned int MatricesUBO;
-            GLCall(glGenBuffers(1, &MatricesUBO));
-            GLCall(glBindBuffer(GL_UNIFORM_BUFFER, MatricesUBO));
-            GLCall(glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::mat4) * 2, NULL, GL_STREAM_DRAW));
-            GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, BPI_GlobalCameraMatrices,
-                MatricesUBO, 0, sizeof(glm::mat4) * 2));
-            GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
-
-            
-
             glm::mat4 containerModelMT = glm::mat4(1.0f);
             containerModelMT = glm::scale(containerModelMT, glm::vec3(5.f));
             glm::mat3 containerNormalMT = glm::mat3(glm::transpose(glm::inverse(containerModelMT)));
 
-          
+            DirectionalLight dirLight;
+            dirLight.setPositionGlobal(10.f, 10.f, 10.f);
+
+            PointLight pointLight;
+            //pointLight.setPositionGlobal(6.f, 4.0f, 0.0f);
+           /* GLCall(glNamedBufferSubData(pointLight.PointLightUBO, 0, sizeof(glm::vec4), glm::value_ptr(pointLight.transform.globalPosition)));*/
+            SpotLight spotLight;
+            //spotLight.setPositionGlobal(0.0f, 8.f, 0.0f);
+            /*GLCall(glNamedBufferSubData(spotLight.SpotLightUBO, 0, sizeof(glm::vec4), glm::value_ptr(spotLight.transform.globalPosition)));*/
+
             std::unique_ptr<Camera> camera = std::make_unique<Camera>(window, 60.0f);
             camera->translateGlobal(0.0f, 0.0f, 10.0f);
 
-            GLCall(glBindBuffer(GL_UNIFORM_BUFFER, MatricesUBO));
-            GLCall(glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(camera->m_projection)));
-            GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
-            
-            
             float deltaTime = 0.0f;	// Time between current frame and last frame
             float lastFrame = 0.0f; // Time of last frame
-            
             /* Loop until the user closes the window */
             while (!window->getWindowShouldClose())
             {
                 float currentFrame = (float)glfwGetTime();
                 deltaTime = currentFrame - lastFrame;
                 lastFrame = currentFrame;
-                //std::cout << 1/deltaTime << '\n';
+                //std::cout << 1 / deltaTime << '\n';
 
                 window->processInput();
-                camera->processInput(deltaTime);
 
-                camera->tick(deltaTime);
-                
+                camera->processInput(deltaTime);
+                camera->tick(deltaTime);  
 
                 /* Render here */
                 GLCall(glClearColor(0.2f, 0.3f, 0.3f, 1.0f));
                 GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-                GLCall(glBindBuffer(GL_UNIFORM_BUFFER, MatricesUBO));
-                GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(camera->m_view)));
-                GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
-                
 
                 VAO.Bind();
                 containerShader.UseShaderProgram();
                 containerShader.setMatrix4fv("model", 1, false, glm::value_ptr(containerModelMT));
                 containerShader.setMatrix3fv("normalMatrix", 1, false, glm::value_ptr(containerNormalMT));
-                containerShader.setVec3("cameraPos", 1, glm::value_ptr(camera->getTransform().globalPosition));
+                //containerShader.setVec3("cameraPos", 1, glm::value_ptr(camera->getTransform().globalPosition));
                 GLCall(glActiveTexture(GL_TEXTURE0));
                 GLCall(glBindTexture(GL_TEXTURE_2D, diffuseMap));
                 GLCall(glActiveTexture(GL_TEXTURE1));
@@ -233,6 +242,7 @@ namespace RE {
                 
 
                 window->swapBuffers();
+
 
                 glfwPollEvents();
             }

@@ -4,14 +4,16 @@ layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoords;
 
-layout (std140) uniform Matrices {
+layout (std140) uniform CameraData {
 	mat4 view;
 	mat4 projection;
+	vec4 position;
 };
 
 uniform mat4 model;
 uniform mat3 normalMatrix;
 
+out vec3 cameraPos;
 out vec3 FragPos;
 out vec2 TexCoords;
 out vec3 Normal;
@@ -22,6 +24,7 @@ void main()
 	FragPos = vec3(model * vec4(aPos, 1.0f));
 	Normal = normalMatrix * aNormal;
 	TexCoords = aTexCoords;
+	cameraPos = position.xyz;
 };
 
 #SHADER FRAGMENT
@@ -76,8 +79,8 @@ in vec3 FragPos;
 in vec3 Normal;
 in vec2 TexCoords;
 out vec4 FragColor;
+in vec3 cameraPos;
 
-uniform vec3 cameraPos;
 uniform Material material;
 
 void main()

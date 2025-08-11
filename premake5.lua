@@ -8,11 +8,13 @@ workspace "RenderingEngine"
     }
 startproject "Sandbox"
 
+
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["GLFW"] = "external/glfw/include" 
 IncludeDir["Glad"] = "external/glad/include"
 IncludeDir["GLM"]  = "external/glm/"
+IncludeDir["Assimp"] = "external/assimp/include"
 
 include "external/glfw"
 include "external/glad"
@@ -68,6 +70,9 @@ project "Sandbox"
 
 sourceDir = "%[%{cfg.buildtarget.relpath}]"
 destDir = "%[../bin/" .. outputdir .. "/Sandbox/]"
+Renderer_libDirs = {}
+Renderer_libDirs["Assimp"] = "external/assimp/Binaries/"
+
 
 project "Renderer"
     location "Renderer"
@@ -75,6 +80,7 @@ project "Renderer"
     language "C++"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    libdirs {Renderer_libDirs.Assimp}
     files
     {
         "%{prj.name}/**.h",
@@ -86,17 +92,24 @@ project "Renderer"
         IncludeDir.GLFW,
         IncludeDir.Glad,
         IncludeDir.GLM,
+        IncludeDir.Assimp,
         "Renderer/Renderer/"
     }
     links 
     {
         "GLFW",
         "Glad",
-        "GLM"
+        "GLM",
+        "assimp-vc143-mt"
+    }
+    prebuildcommands
+    {
+        ("{COPYFILE} %{wks.location}".. Renderer_libDirs.Assimp .. "assimp-vc143-mt.dll ../bin/" .. outputdir .. "/Renderer")
     }
     postbuildcommands
     {
         ("{MKDIR} ../bin/" .. outputdir .. "/Sandbox/"),
+        ("{COPYFILE} %{wks.location}".. Renderer_libDirs.Assimp .. "assimp-vc143-mt.dll ../bin/" .. outputdir .. "/Sandbox"),
         ("{COPYFILE} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
     }
 
@@ -120,6 +133,7 @@ project "Renderer"
         {
             "RE_PLATFORM_WINDOWS",
             "RE_BUILD_DLL",
+            "ASSIMP_DLL"
         }
     filter {"system:windows","configurations:Release"}
         buildoptions "/MT"

@@ -30,7 +30,7 @@ namespace RE {
 
 		float m_lastX, m_lastY;
 		bool m_bFirstMouse = false;
-
+		unsigned int m_MatricesUBO;
 		std::shared_ptr<Window> m_windowRef;
 
 	public:

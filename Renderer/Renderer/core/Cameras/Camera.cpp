@@ -1,7 +1,9 @@
+#include "Camera.h"
 
 #include <iostream>
 #include <functional>
-#include "Camera.h"
+#include "glad/glad.h"
+#include "core/Constants.h"
 
 RE::Camera::Camera(std::shared_ptr<Window> window, float FOV)
     :m_windowRef(window), m_cameraFront(0.0f, 0.0f, -1.0f), m_cameraUp(0.0f, 1.0f, 0.0f), m_view(1.0f)
@@ -23,6 +25,15 @@ RE::Camera::Camera(std::shared_ptr<Window> window, float FOV)
         };
     InputHandler::GetInputHandlerInstance(window->getWindowRef())->registerScrollOffsetCallback(scb);
 
+    GLCall(glGenBuffers(1, &m_MatricesUBO));
+    GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_MatricesUBO));
+    GLCall(glBufferData(GL_UNIFORM_BUFFER, sizeof(glm::vec4) * 9, NULL, GL_DYNAMIC_DRAW));
+    GLCall(glBindBufferRange(GL_UNIFORM_BUFFER, BPI_GlobalCameraMatrices,
+        m_MatricesUBO, 0, sizeof(glm::vec4) * 9));
+    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0,   64, glm::value_ptr(m_view)));
+    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 64,  64, glm::value_ptr(m_projection)));
+    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 128, 16, glm::value_ptr(transform.globalPosition)));
+    GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
     
 }
 
@@ -34,6 +45,10 @@ RE::Camera::~Camera()
 void RE::Camera::tick(float deltaTime)
 {
     m_view = glm::lookAt(transform.globalPosition, transform.globalPosition + m_cameraFront, m_cameraUp);
+    GLCall(glBindBuffer(GL_UNIFORM_BUFFER, m_MatricesUBO));
+    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, 64, glm::value_ptr(m_view)));
+    GLCall(glBufferSubData(GL_UNIFORM_BUFFER, 128, 16, glm::value_ptr(transform.globalPosition)));
+    GLCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 }
 
 void RE::Camera::processInput(float deltaTime)
