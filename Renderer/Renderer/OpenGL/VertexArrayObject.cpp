@@ -5,16 +5,18 @@ RE::VertexArrayObject::VertexArrayObject()
 	GLCall(glGenVertexArrays(1, &this->m_vaoID));
 }
 
-void RE::VertexArrayObject::BindVertexBuffer(const float* vertices, size_t verticesCount, const VertexAttribute* metadata, int NumOfVertexAttributes, GLenum mode)
+void RE::VertexArrayObject::BindVertexBuffer(const Vertex* vertices, size_t verticesCount, GLenum mode)
 {
-	m_VertexBufferObject.AddDataToBuffer(vertices,verticesCount,metadata,NumOfVertexAttributes, mode);
+	Bind();
+	m_VertexBufferObject.AddDataToBuffer(vertices,verticesCount, mode);
+	UnBind();
 }
 
 void RE::VertexArrayObject::BindElementBuffer(const unsigned int* indices, size_t indicesCount, GLenum mode)
 {
-
+	Bind();
 	m_ElementBufferObject.AddDataToBuffer(indices,indicesCount,mode);
-
+	UnBind();
 }
 
 void RE::VertexArrayObject::Bind()

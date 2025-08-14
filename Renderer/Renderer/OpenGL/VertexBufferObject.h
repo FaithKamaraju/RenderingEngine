@@ -1,6 +1,7 @@
 #pragma once
 #include "core/core.h"
 #include "glad/glad.h"
+#include "OpenGL/Vertex.h"
 #include "VerticesMetaData.h"
 
 namespace RE {
@@ -15,14 +16,11 @@ namespace RE {
 	public:
 
 		VertexBufferObject();
-		void AddDataToBuffer(const float* vertices, size_t verticesCount,
-			const VertexAttribute* metadata, int NumOfVertexAttributes, GLenum mode);
+		void AddDataToBuffer(const Vertex* vertices, size_t verticesCount, GLenum mode);
 		~VertexBufferObject();
 
 		void _bindBuffer();
-		void _addVertexAttribute(unsigned int location, unsigned int size, GLenum type,
-			bool bNormalized, unsigned int stride, const void* offset);
-
+		void _unbindBuffer();
 	private:
 
 	};

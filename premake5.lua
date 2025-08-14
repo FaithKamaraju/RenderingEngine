@@ -62,6 +62,7 @@ project "Sandbox"
         systemversion "latest"
         defines
         {
+            "RE_DLL",
             "RE_PLATFORM_WINDOWS",
         }
 

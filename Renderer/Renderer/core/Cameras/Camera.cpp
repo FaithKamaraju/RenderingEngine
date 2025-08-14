@@ -42,6 +42,11 @@ RE::Camera::~Camera()
 
 }
 
+void RE::Camera::beginPlay()
+{
+
+}
+
 void RE::Camera::tick(float deltaTime)
 {
     m_view = glm::lookAt(transform.globalPosition, transform.globalPosition + m_cameraFront, m_cameraUp);

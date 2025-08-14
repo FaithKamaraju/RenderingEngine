@@ -18,6 +18,7 @@ namespace RE {
 		~ElementBufferObject();
 
 		void _bindBuffer();
+		void _unbindBuffer();
 	};
 }
 

@@ -1,9 +1,10 @@
 #pragma once
 #include "core/core.h"
-#include "core/Object.h"
+#include "core/Lights/LightBase.h"
 #include "OpenGL/VertexArrayObject.h"
 #include "OpenGL/Shader.h"
 #include "core/Cameras/Camera.h"
+#include "core/Mesh/Mesh.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -13,9 +14,10 @@
 
 namespace RE {
 
-	class RE_API SpotLight : public Object
+	class RE_API SpotLight : public LightBase, public std::enable_shared_from_this<SpotLight>
 	{
     public:
+
         glm::vec3 m_lightColor = glm::vec3(1.f);
         glm::vec3 direction;
         glm::vec3 ambient;
@@ -28,15 +30,17 @@ namespace RE {
         float quadratic;
 
     private:
-
-        VertexArrayObject m_VAOId;
+        void _updateModelMatrix() override;
 
     public:
         SpotLight();
+        ~SpotLight();
 
+        void beginPlay() override;
         void tick(float deltaTime) override;
         void processInput(float deltaTime) override;
 
+        void registerLight();
         /*void setUniforms();*/
 	};
 }

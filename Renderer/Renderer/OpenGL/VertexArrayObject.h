@@ -17,8 +17,7 @@ namespace RE {
 	public:
 		//const float* vertices, const VertexAttribute* metadata, const unsigned int* indices
 		VertexArrayObject();
-		void BindVertexBuffer(const float* vertices, size_t verticesCount,
-			const VertexAttribute* metadata, int NumOfVertexAttributes, GLenum mode);
+		void BindVertexBuffer(const Vertex* vertices, size_t verticesCount, GLenum mode);
 		void BindElementBuffer(const unsigned int* indices, size_t indicesCount, GLenum mode);
 
 		void Bind();

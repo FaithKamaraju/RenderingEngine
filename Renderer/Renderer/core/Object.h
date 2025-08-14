@@ -16,8 +16,9 @@ namespace RE {
 	protected:
 		glm::mat4 m_modelMatrix;
 		glm::mat4 m_modelMatrixLocal;
-		Shader m_shaderID;
+		
 	public:
+		Shader m_shaderID;
 		Object();
 
 		ObjectTransform getTransform();
@@ -42,13 +43,15 @@ namespace RE {
 		void rotateGlobal(float pitch, float yaw, float roll);
 		void rotateGlobal(glm::vec3 rotateBy);
 
-		void render();
+		
 
+	protected:
+
+		virtual void beginPlay() = 0;
 		virtual void tick(float deltaTime) = 0;
 		virtual void processInput(float deltaTime) = 0;
 
-	private:
-		void _updateModelMatrix();
+		virtual void _updateModelMatrix();
 	};
 }
 

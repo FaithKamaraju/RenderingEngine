@@ -10,7 +10,7 @@
 	
 	#ifdef RE_BUILD_DLL
 		#define RE_API __declspec(dllexport)
-	#else
+	#elif (defined RE_DLL)
 		#define RE_API __declspec(dllimport)
 	#endif
 #else

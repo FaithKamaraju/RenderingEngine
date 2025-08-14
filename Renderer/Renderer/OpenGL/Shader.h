@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+#include "OpenGL/Texture.h"
+
 
 
 namespace RE {

@@ -2,10 +2,11 @@
 
 #include "core/core.h"
 
-#include "core/Object.h"
+#include "core/Lights/LightBase.h"
 #include "OpenGL/VertexArrayObject.h"
 #include "OpenGL/Shader.h"
 #include "core/Cameras/Camera.h"
+#include "core/Mesh/Mesh.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -14,7 +15,7 @@
 
 
 namespace RE {
-	class RE_API DirectionalLight : public Object
+	class RE_API DirectionalLight : public LightBase
 	{
 	public:
         glm::vec3 m_lightColor = glm::vec3(1.f);
@@ -25,7 +26,6 @@ namespace RE {
         unsigned int DirLightUBO;
 
     private:
-        VertexArrayObject m_VAOId;
 
     public:
         DirectionalLight();
@@ -34,6 +34,8 @@ namespace RE {
         void processInput(float deltaTime) override;
 
         void updateDirection();
+
+        void beginPlay() override;
 
         //void setUniforms();
 	};

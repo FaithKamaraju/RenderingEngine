@@ -7,15 +7,21 @@ RE::VertexBufferObject::VertexBufferObject()
 	GLCall(glGenBuffers(1, &this->m_BufferID));
 }
 
-void RE::VertexBufferObject::AddDataToBuffer(const float* vertices, size_t verticesCount,
-	const VertexAttribute* metadata, int NumOfVertexAttributes, GLenum mode)
+void RE::VertexBufferObject::AddDataToBuffer(const Vertex* vertices, size_t verticesCount, GLenum mode)
 {
 	_bindBuffer();
 	GLCall(glBufferData(GL_ARRAY_BUFFER, verticesCount, vertices, mode));
-	for (int i = 0; i < NumOfVertexAttributes; i++) {
-		_addVertexAttribute(metadata[i].location, metadata[i].size, metadata[i].type, metadata[i].bNormalized, metadata[i].stride, metadata[i].offset);
-		GLCall(glEnableVertexAttribArray(metadata[i].location));
-	}
+
+	// vertex position
+	GLCall(glEnableVertexAttribArray(0));
+	GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0));
+	
+	// vertex normals
+	GLCall(glEnableVertexAttribArray(1));
+	GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal)));
+	// vertex texture coords
+	GLCall(glEnableVertexAttribArray(2));
+	GLCall(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords)));
 
 }
 
@@ -29,9 +35,8 @@ void RE::VertexBufferObject::_bindBuffer()
 {
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, this->m_BufferID));
 }
-
-void RE::VertexBufferObject::_addVertexAttribute(unsigned int location, unsigned int size, GLenum type,
-	bool bNormalized, unsigned int stride, const void* offset)
+void RE::VertexBufferObject::_unbindBuffer()
 {
-	GLCall(glVertexAttribPointer(location, size, type, bNormalized, stride, offset));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
+

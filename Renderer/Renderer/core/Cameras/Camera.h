@@ -38,6 +38,8 @@ namespace RE {
 		Camera() = delete;
 		~Camera();
 
+
+		void beginPlay() override;
 		void tick(float deltaTime) override;
 		void processInput(float deltaTime) override;
 		void cameraLook(double xpos, double ypos);

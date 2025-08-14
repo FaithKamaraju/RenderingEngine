@@ -180,10 +180,3 @@ void RE::Object::_updateModelMatrix()
 
 	
 }
-
-void RE::Object::render()
-{
-	m_shaderID.UseShaderProgram();
-	m_shaderID.setMatrix4fv("model", 1, false, glm::value_ptr(m_modelMatrix));
-	glDrawArrays(GL_TRIANGLES, 0, 36);
-}

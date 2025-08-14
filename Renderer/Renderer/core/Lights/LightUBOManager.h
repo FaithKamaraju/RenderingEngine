@@ -2,9 +2,9 @@
 
 #include "core/core.h"
 #include "core/Constants.h"
-#include <array>
+#include <vector>
+#include <memory>
 #include <mutex>
-
 #include <glm/glm.hpp>
 
 
@@ -19,7 +19,7 @@ namespace RE {
 		float constant = 0.f;					//4  64
 		float linear = 0.f;						//4  68
 		float quadratic = 0.f;					//4  72
-		float padding = 0.f;					//4  76
+		int id = -1;							//4  76
 	};
 	struct RE_API SpotLightStruct {
 		glm::vec4 position{ 0.0f };				//16 0
@@ -32,10 +32,19 @@ namespace RE {
 		float constant = 0.f;					// 4 88
 		float linear = 0.f;						// 4 92
 		float quadratic = 0.f;					// 4 96
-		float padding1 = 0.f;					// 4 100
+		int id = -1;							// 4 100
 		float padding2 = 0.f;					// 4 104
 		float padding3 = 0.f;					// 4 108
 	};
+
+	class PointLight;
+	class SpotLight;
+
+	constexpr int _PointLightOffset = 0;
+	constexpr int _SpotLightOffset = MAXLIGHTS * sizeof(PointLightStruct);
+	constexpr int _numPointLightsOffset = (MAXLIGHTS * sizeof(SpotLightStruct)) + _SpotLightOffset;
+	constexpr int _numSpotLightsOffset = _numPointLightsOffset + 4;
+
 
 	class RE_API LightUBOManager
 	{
@@ -44,21 +53,16 @@ namespace RE {
 		static std::mutex _mutex;
 
 		unsigned int LightsUBO;
-		int numPointLights;
-		int numSpotLights;
 
-		int _PointLightOffset;
-		int _SpotLightOffset;
-		int _numPointLightsOffset;
-		int _numSpotLightsOffset;
+		std::vector<std::weak_ptr<PointLight>> pointLightsArr{};
+		std::vector<std::weak_ptr<SpotLight>> spotLightsArr{};
 
 	private:
 
 		LightUBOManager();
-		
 
-		/*std::array<PointLight, MAXLIGHTS> pointLightsArr;
-		std::array<SpotLight, MAXLIGHTS> spotLightsArr;*/
+		void resetPointLightMemory(size_t index);
+		void resetSpotLightMemory(size_t index);
 
 	public:
 		LightUBOManager(LightUBOManager& other) = delete;
@@ -66,8 +70,15 @@ namespace RE {
 
 		static LightUBOManager* GetInstance();
 
-		void addPointLightToMemory(const PointLightStruct& pointLightInfo);
-		void addSpotLightToMemory(const SpotLightStruct& spotLightInfo);
+		int addPointLightToMemory(std::shared_ptr<PointLight> pointLightPtr);
+		int addSpotLightToMemory(std::shared_ptr<SpotLight> spotLightPtr);
+
+		void updateUBO(std::weak_ptr<PointLight> pointLightPtr);
+		void updateUBO(std::weak_ptr<SpotLight> spotLightPtr);
+
+		void deleteLight(std::weak_ptr<PointLight> pointLightPtr);
+		void deleteLight(std::weak_ptr<SpotLight> spotLightPtr);
+
 	};
 }
 
