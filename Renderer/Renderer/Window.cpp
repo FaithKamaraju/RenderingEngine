@@ -1,5 +1,8 @@
 #include "Window.h"
 
+#include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_glfw.h"
+#include "imgui/backends/imgui_impl_opengl3.h"
 
 #include <iostream>
 
@@ -17,8 +20,9 @@ RE::Window::Window(int width, int height, const char* title)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+    float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor());
     /* Create a windowed mode window and its OpenGL context */
-    m_Window = glfwCreateWindow(m_Width, m_Height, m_WindowTitle, NULL, NULL);
+    m_Window = glfwCreateWindow((int)main_scale * m_Width, (int)main_scale * m_Height, m_WindowTitle, NULL, NULL);
     if (!m_Window)
     {
         std::cerr << "Failed to create GLFW window" << std::endl;

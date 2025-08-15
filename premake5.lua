@@ -15,10 +15,12 @@ IncludeDir["GLFW"] = "external/glfw/include"
 IncludeDir["Glad"] = "external/glad/include"
 IncludeDir["GLM"]  = "external/glm/"
 IncludeDir["Assimp"] = "external/assimp/include"
+IncludeDir["ImGui"] = "external/imgui/"
 
 include "external/glfw"
 include "external/glad"
 include "external/glm"
+include "external/imgui"
 
 project "Sandbox"
     location "Sandbox"
@@ -94,6 +96,7 @@ project "Renderer"
         IncludeDir.Glad,
         IncludeDir.GLM,
         IncludeDir.Assimp,
+        IncludeDir.ImGui,
         "Renderer/Renderer/"
     }
     links 
@@ -101,6 +104,7 @@ project "Renderer"
         "GLFW",
         "Glad",
         "GLM",
+        "IMGUI",
         "assimp-vc143-mt"
     }
     prebuildcommands
