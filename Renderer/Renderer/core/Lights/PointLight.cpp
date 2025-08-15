@@ -11,7 +11,7 @@ void RE::PointLight::_updateModelMatrix()
 }
 
 RE::PointLight::PointLight()
-	:ambient(0.1f), diffuse(2.f), specular(2.f)
+	:ambient(0.1f), diffuse(1.f), specular(1.f)
 {
     		
     constant = 1.0f;

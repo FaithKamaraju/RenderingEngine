@@ -13,8 +13,6 @@
 #include "core/Constants.h"
 #include "InputHandler.h"
 #include "OpenGL/Shader.h"
-#include "OpenGL/VertexArrayObject.h"
-#include "OpenGL/VerticesMetaData.h"
 #include "Window.h"
 #include "core/Cameras/Camera.h"
 #include "core/Lights/DirectionalLight.h"
@@ -29,22 +27,24 @@ namespace RE {
         return new Renderer();
     }
 
- 
     int Renderer::mainLoop() {
 
         {
-            stbi_set_flip_vertically_on_load(true);
+           
             std::shared_ptr<Window> window = std::make_shared<Window>(800, 600, "Hello World!");
 
             window->initGLAD();
             window->setInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            glfwSwapInterval(0);
+            glfwSwapInterval(1);
 
             InputHandler::GetInputHandlerInstance(window->getWindowRef());
 
             GLCall(glEnable(GL_DEPTH_TEST));
+            //GLCall(glEnable(GL_CULL_FACE));
 
-            Model model("Resources/Models/backpack/backpack.obj");
+
+            Model model("Resources/Models/Basic/Quad/Quad.obj");
+
 
             Shader shader;
             shader.AttachShaders("Resources/Shaders/BasicShader.shader");
@@ -58,53 +58,33 @@ namespace RE {
             GLCall(glUniformBlockBinding(shader.m_ShaderProgramID, LightsBlockIndex, BPI_Lights));
 
             glm::mat4 ModelMT = glm::mat4(1.0f);
-            ModelMT = glm::scale(ModelMT, glm::vec3(1.f));
+            ModelMT = glm::scale(ModelMT, glm::vec3(20.f));
             glm::mat3 NormalMT = glm::mat3(glm::transpose(glm::inverse(ModelMT)));
-            
-            /*
-            shader.setInt("material.texture_diffuse1", 0);
-            shader.setInt("material.texture_specular1", 1);
-            shader.setFloat("material.shininess", 32.0f);*/
 
             /*auto dirLight = std::make_shared<DirectionalLight>();
             dirLight->setPositionGlobal(10.f, 10.f, 10.f);*/
 
             auto pointLight = std::make_shared<PointLight>();
-            pointLight->setPositionGlobal(10.f, 0.0f, 0.0f);
+            pointLight->setPositionGlobal(0.f, 1.f, 0.0f);
 
-            auto pointLight1 = std::make_shared<PointLight>();
-            pointLight1->setPositionGlobal(-10.f, 0.0f, 0.0f);
-
-            auto pointLight2 = std::make_shared<PointLight>();
-            pointLight2->setPositionGlobal(0.f, -10.0f, 0.0f);
-
-            auto pointLight3 = std::make_shared<PointLight>();
-            pointLight3->setPositionGlobal(0.f, 10.0f,0.0f);
 
             std::unique_ptr<Camera> camera = std::make_unique<Camera>(window, 60.0f);
             camera->translateGlobal(0.0f, 0.0f, 10.0f);
 
             camera->beginPlay();
             pointLight->beginPlay();
-            pointLight1->beginPlay();
-            pointLight2->beginPlay();
-            pointLight3->beginPlay();
-            /*spotLight->beginPlay();
-            dirLight->beginPlay();*/
+            //dirLight->beginPlay();
 
             float deltaTime = 0.0f;	// Time between current frame and last frame
             float lastFrame = 0.0f; // Time of last frame
-            float time = 0.0f;
+
             /* Loop until the user closes the window */
             while (!window->getWindowShouldClose())
             {
                 float currentFrame = (float)glfwGetTime();
                 deltaTime = currentFrame - lastFrame;
                 lastFrame = currentFrame;
-                time += deltaTime;
                 
-                std::cout << 1 / deltaTime << '\n';
-
                 window->processInput();
 
                 camera->processInput(deltaTime);
@@ -120,11 +100,6 @@ namespace RE {
                 shader.setMatrix3fv("normalMatrix", 1, false, glm::value_ptr(NormalMT));
                 model.Draw(shader);
 
-                //spotLight->m_shaderID.UseShaderProgram();
-                //spotLight->m_shaderID.setMatrix4fv("model", 1, false, glm::value_ptr(spotLight->getModelMT()));
-                ////spotLight.m_shaderID.setMatrix3fv("normalMatrix", 1, false, glm::value_ptr(NormalMT));
-                //spotLight->mesh->Draw(true);
-                
 
                 window->swapBuffers();
 
@@ -135,5 +110,9 @@ namespace RE {
         glfwTerminate();
         return 0;
     }
+
+   
+    
+
 }
 

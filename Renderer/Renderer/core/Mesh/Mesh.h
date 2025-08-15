@@ -1,14 +1,8 @@
 #pragma once
 
 #include <vector>
-
-#include "glm/glm.hpp"
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
 #include "core/core.h"
-#include "OpenGL/Shader.h"
-#include "OpenGL/VertexArrayObject.h"
+#include "OpenGL/Vertex.h"
 
 namespace RE {
 

@@ -98,10 +98,11 @@ void main()
 
 		// specular
 		vec3 viewDir = normalize(cameraPos - FragPos);
-		vec3 reflectDir = reflect(-lightDir, norm);
-		float spec = pow(max(dot(reflectDir, viewDir), 0.0), material.shininess);
+		//vec3 reflectDir = reflect(-lightDir, norm);
+		vec3 halfwayDir = normalize(lightDir + viewDir);
+		float spec = pow(max(dot(halfwayDir, norm), 0.0), material.shininess);
 		vec3 specular = dirLightspecular.xyz * spec * vec3(texture(material.texture_specular1, TexCoords));
-
+		 //
 		vec3 directionalResult = ambient + diffuse + specular;
 
 	// Point Lights
@@ -116,13 +117,14 @@ void main()
 		diffuse = pointLights[i].pointLightdiffuse.xyz * diff * texture(material.texture_diffuse1, TexCoords).rgb;
 
 		// specular
-		reflectDir = reflect(-lightDir, norm);
-		spec = pow(max(dot(reflectDir, viewDir), 0.0), material.shininess);
+		//reflectDir = reflect(-lightDir, norm);
+		halfwayDir = normalize(lightDir + viewDir);
+		spec = pow(max(dot(halfwayDir, norm), 0.0), material.shininess);
 		specular = pointLights[i].pointLightspecular.xyz * spec * texture(material.texture_specular1, TexCoords).rgb;
 
 		float distance    = length(pointLights[i].pointLightposition.xyz - FragPos);
 		float attenuation = 1.0 / (pointLights[i].pointLightconstant + (pointLights[i].pointLightlinear * distance) + (pointLights[i].pointLightquadratic * (distance * distance)));
-
+		// 
 		vec3 tempResult = ambient + diffuse + specular;
 		tempResult *= attenuation;
 		pointResult += tempResult;
@@ -147,8 +149,9 @@ void main()
 		diffuse = spotLights[i].spotLightdiffuse.xyz * diff * texture(material.texture_diffuse1, TexCoords).rgb;
 
 		// specular
-		reflectDir = reflect(-lightDir, norm);
-		spec = pow(max(dot(reflectDir, viewDir), 0.0), material.shininess);
+		//reflectDir = reflect(-lightDir, norm);
+		halfwayDir = normalize(lightDir + viewDir);
+		spec = pow(max(dot(halfwayDir, norm), 0.0), material.shininess);
 		specular = spotLights[i].spotLightspecular.xyz * spec * texture(material.texture_specular1, TexCoords).rgb;
 
 		float distance    = length(spotLights[i].spotLightposition.xyz - FragPos);
@@ -157,7 +160,7 @@ void main()
 		// we'll leave ambient unaffected so we always have a little light.
 		diffuse  *= intensity;
 		specular *= intensity;
-
+		// 
 		vec3 tempResult = ambient + diffuse + specular;
 		tempResult *= attenuation;
 		spotLightResult += tempResult;
@@ -165,6 +168,7 @@ void main()
 		//
 	
 	vec3 result = directionalResult + pointResult +  spotLightResult ;
+	result = clamp(result, 0.0, 1.0);
 
     FragColor = vec4(result, 1.0f);
 };
