@@ -12,18 +12,24 @@ startproject "FEEditor"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
-IncludeDir["GLFW"] = "external/glfw/include" 
+-- IncludeDir["GLFW"] = "external/glfw/include"
 IncludeDir["Glad"] = "external/glad/include"
 IncludeDir["GLM"]  = "external/glm/"
 IncludeDir["Assimp"] = "external/assimp/include"
 IncludeDir["ImGui"] = "external/imgui/"
+IncludeDir["sdl3"] = "external/sdl3/include"
 
-include "external/glfw"
+-- include "external/glfw"
 include "external/glad"
 include "external/glm"
 include "external/imgui"
 
+FEEngineCore_libDirs = {}
+FEEngineCore_libDirs["Assimp"] = "external/assimp/Binaries/"
+FEEngineCore_libDirs["sdl3"] = "external/sdl3/Binaries/"
 
+EnginePaths = {}
+EnginePaths["FEEngineCore"] = "%{wks.location}/bin/" .. outputdir .. "/FEEngineCore/FEEngineCore.dll"
 
 
 
@@ -31,8 +37,8 @@ project "Sandbox"
     location "Sandbox"
     kind "ConsoleApp"
     language "C++"
-    targetdir ("bin/" .. outputdir .. "/")
-    objdir ("bin-int/" .. outputdir .. "/")
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/")
     files
     {
         "%{prj.name}/**.h",
@@ -42,13 +48,19 @@ project "Sandbox"
     includedirs
     {
         IncludeDir.GLM,
-        "%{wks.location}/FEEngine"
+        "%{wks.location}/FEEngineCore"
     }
 
     links
     {
-        "FEEngine",
+        "FEEngineCore",
         "GLM"
+    }
+    prebuildcommands
+    {
+        ("{COPYFILE} %{wks.location}".. FEEngineCore_libDirs.sdl3 .. "SDL3.dll ../bin/" .. outputdir .."/%{prj.name}"),
+        ("{COPYFILE} %{wks.location}".. FEEngineCore_libDirs.Assimp .. "assimp-vc143-mt.dll ../bin/" .. outputdir .."/%{prj.name}"),
+        ("{COPYFILE} " .. EnginePaths.FEEngineCore .. " ../bin/" .. outputdir .. "/%{prj.name}")
     }
 
     filter "configurations:Debug"
@@ -71,6 +83,7 @@ project "Sandbox"
         {
             "FE_DLL",
             "FE_PLATFORM_WINDOWS",
+            "FE_GAME",
         }
 
 
@@ -84,16 +97,15 @@ project "Sandbox"
 
 
 
-FEEngine_libDirs = {}
-FEEngine_libDirs["Assimp"] = "external/assimp/Binaries/"
 
-project "FEEngine"
-    location "FEEngine"
+
+project "FEEngineCore"
+    location "FEEngineCore"
     kind "SharedLib"
     language "C++"
-    targetdir ("bin/" .. outputdir .. "/")
-    objdir ("bin-int/" .. outputdir .. "/")
-    libdirs {FEEngine_libDirs.Assimp}
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/")
+    libdirs {FEEngineCore_libDirs.Assimp, FEEngineCore_libDirs.sdl3}
     files
     {
         "%{prj.name}/**.h",
@@ -102,25 +114,27 @@ project "FEEngine"
 
     includedirs
     {
-        IncludeDir.GLFW,
         IncludeDir.Glad,
         IncludeDir.GLM,
         IncludeDir.ImGui,
         IncludeDir.Assimp,
+        IncludeDir.sdl3,
         "%{prj.location}"
     }
     links 
     {
-        "GLFW",
         "Glad",
         "GLM",
         "IMGUI",
         "assimp-vc143-mt",
+        "SDL3",
     }
     prebuildcommands
     {
-        ("{COPYFILE} %{wks.location}".. FEEngine_libDirs.Assimp .. "assimp-vc143-mt.dll ../bin/" .. outputdir .."")
+        ("{COPYFILE} %{wks.location}".. FEEngineCore_libDirs.sdl3 .. "SDL3.dll ../bin/" .. outputdir .."/%{prj.name}"),
+        ("{COPYFILE} %{wks.location}".. FEEngineCore_libDirs.Assimp .. "assimp-vc143-mt.dll ../bin/" .. outputdir .."/FEEngineCore"),
     }
+    
 
     filter "configurations:Debug"
       defines { "FE_DEBUG" }
@@ -152,16 +166,14 @@ project "FEEngine"
 
 
 
-FEEditor_libDirs = {}
-FEEditor_libDirs["Assimp"] = "external/assimp/Binaries/"
 
 project "FEEditor"
     location "FEEditor"
     kind "ConsoleApp"
     language "C++"
-    targetdir ("bin/" .. outputdir .. "/")
-    objdir ("bin-int/" .. outputdir .. "/")
-    libdirs {FEEditor_libDirs.Assimp}
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/")
+    libdirs {FEEngineCore_libDirs.Assimp}
     files
     {
         "%{prj.name}/**.h",
@@ -172,13 +184,19 @@ project "FEEditor"
     {
         IncludeDir.GLM,
         IncludeDir.ImGui,
-        "%{wks.location}/FEEngine/"
+        "%{wks.location}/FEEngineCore/"
     }
     links 
     {
         "GLM",
         "IMGUI",
-        "FEEngine",
+        "FEEngineCore",
+    }
+    prebuildcommands
+    {
+        ("{COPYFILE} %{wks.location}".. FEEngineCore_libDirs.sdl3 .. "SDL3.dll ../bin/" .. outputdir .."/%{prj.name}"),
+        ("{COPYFILE} %{wks.location}".. FEEngineCore_libDirs.Assimp .. "assimp-vc143-mt.dll ../bin/" .. outputdir .."/%{prj.name}"),
+        ("{COPYFILE} " .. EnginePaths.FEEngineCore .. " ../bin/" .. outputdir .. "/%{prj.name}")
     }
     
 
@@ -202,87 +220,7 @@ project "FEEditor"
         {
             "FE_PLATFORM_WINDOWS",
             "FE_DLL",
+            "FE_EDITOR",
         }
     filter {"system:windows","configurations:Release"}
-        buildoptions "/MT"
-
-
-
-
-
-
-
-
-
--- Renderer_libDirs = {}
--- Renderer_libDirs["Assimp"] = "external/assimp/Binaries/"
-
--- project "FERenderer"
---     location "FERenderer"
---     kind "SharedLib"
---     language "C++"
---     targetdir ("bin/" .. outputdir .. "/")
---     objdir ("bin-int/" .. outputdir .. "/")
---     libdirs {Renderer_libDirs.Assimp}
---     files
---     {
---         "%{prj.name}/**.h",
---         "%{prj.name}/**.cpp"
---     }
-
---     includedirs
---     {
---         IncludeDir.GLFW,
---         IncludeDir.Glad,
---         IncludeDir.GLM,
---         IncludeDir.Assimp,
---         IncludeDir.ImGui,
---         "%{prj.location}",
---         "%{wks.location}/FEEngine/"
---     }
---     links 
---     {
---         "GLFW",
---         "Glad",
---         "GLM",
---         "IMGUI",
---         "assimp-vc143-mt",
-
---         "FEEngine",
---     }
---     prebuildcommands
---     {
---         ("{COPYFILE} %{wks.location}".. Renderer_libDirs.Assimp .. "assimp-vc143-mt.dll ../bin/" .. outputdir .."")
---     }
-
---     filter "configurations:Debug"
---       defines { "FE_DEBUG" }
---       symbols "On"
-
---     filter "configurations:Release"
---       defines { "FE_RELEASE" }
---       optimize "On"
-
---     filter "configurations:Dist"
---       defines { "FE_DIST" }
---       optimize "On"
-
---     filter "system:windows"
---         cppdialect "C++20"
---         staticruntime "On"
---         systemversion "latest"
---         defines
---         {
---             "FE_PLATFORM_WINDOWS",
---             "FE_DLL",
---             "FER_BUILD_DLL",
---             "ASSIMP_DLL"
---         }
---     filter {"system:windows","configurations:Release"}
---         buildoptions "/MT"
-
-
-
-    
-
-    
+        buildoptions "/MT"    

@@ -368,3 +368,4 @@ FodyWeavers.xsd
 bin-int/
 Sandbox/Renderer.dll
 Sandbox/Sandbox.exe
+# external/glfw

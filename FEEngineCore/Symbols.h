@@ -1,0 +1,23 @@
+#pragma once
+
+// typedefs
+
+typedef unsigned int FEenum;
+
+
+//defines
+
+#define FE_WINDOW								0x00000001
+#define FE_WINDOW_FULLSCREEN					0x00000002
+#define FE_WINDOW_WINDOWED						0x00000003
+#define FE_WINDOW_BORDERLESS_WINDOWED			0x00000004
+#define FE_WINDOW_MINIMIZED						0x00000005
+#define FE_WINDOW_MAXIMIZED						0x00000006
+#define FE_WINDOW_HIDDEN						0x00000007
+#define FE_WINDOW_VISIBLE						0x00000008
+
+#define FE_CURSOR								0x00000009
+#define FE_CURSOR_NORMAL						0x0000000a
+#define FE_CURSOR_HIDDEN						0x0000000b
+#define FE_CURSOR_DISABLED						0x0000000c
+#define FE_CURSOR_CAPTURED						0x00000013
