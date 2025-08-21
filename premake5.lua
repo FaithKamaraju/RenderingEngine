@@ -12,14 +12,12 @@ startproject "FEEditor"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
--- IncludeDir["GLFW"] = "external/glfw/include"
 IncludeDir["Glad"] = "external/glad/include"
 IncludeDir["GLM"]  = "external/glm/"
 IncludeDir["Assimp"] = "external/assimp/include"
 IncludeDir["ImGui"] = "external/imgui/"
 IncludeDir["sdl3"] = "external/sdl3/include"
 
--- include "external/glfw"
 include "external/glad"
 include "external/glm"
 include "external/imgui"

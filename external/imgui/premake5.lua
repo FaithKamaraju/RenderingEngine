@@ -4,28 +4,23 @@ project "IMGUI"
 	cppdialect "C++20"
 	architecture "x64"
 
-	include "../glfw"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 	
 	includedirs { 
-	"%{prj.location}/imgui/",
-	"../glfw/include", 
+	"./imgui/",
 }
 
 	files
 	{
-		"imgui/**.h",
-        "imgui/**.cpp",
-        "imgui/misc/debuggers/imgui.natvis",
-        "imgui/misc/debuggers/imgui.natstepfilter",
-        "imgui/misc/cpp/imgui_stdlib.*"
+		"./imgui/**.h",
+        "./imgui/**.cpp",
+        "./imgui/misc/debuggers/imgui.natvis",
+        "./imgui/misc/debuggers/imgui.natstepfilter",
+        "./imgui/misc/cpp/imgui_stdlib.*"
 	}
 
-	links{
-		"GLFW",
-	}
     
 	filter "system:linux"
 		pic "On"

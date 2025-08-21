@@ -1,9 +1,6 @@
 #pragma once
 
 #include "IWindow.h"
-
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
 #include "ApplicationCore/InputHandler.h"
 
 namespace FE {
@@ -32,9 +29,6 @@ namespace FE {
 		static std::unique_ptr<IWindow> CreateWindow();
 	};
 
-	static void MakeContextCurrent(const IWindow& window) {
-		glfwMakeContextCurrent();
-	}
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	{
 		glViewport(0, 0, width, height);

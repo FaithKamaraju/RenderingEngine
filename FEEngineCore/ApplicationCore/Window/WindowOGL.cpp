@@ -1,7 +1,7 @@
 #include "WindowOGL.h"
 
 
-
+#include "glad/glad.h"
 
 FE::WindowOGL::~WindowOGL()
 {
@@ -10,8 +10,32 @@ FE::WindowOGL::~WindowOGL()
 void FE::WindowOGL::Init(int width, int height, const char* title, FEenum windowMode)
 {
 }
+bool FE::WindowOGL::getWindowShouldClose() const
+{
+	return false;
+}
 void FE::WindowOGL::setInputMode(FEenum mode, FEenum value) const
 {
+}
+
+void FE::WindowOGL::processInput()
+{
+}
+
+void FE::WindowOGL::clearBuffers()
+{
+}
+
+void FE::WindowOGL::swapBuffers()
+{
+}
+
+void FE::WindowOGL::setFrameBufferSizeCallBack() const
+{
+}
+
+std::unique_ptr<FE::IWindow> FE::IWindow::CreateWindow() {
+
 }
 
 
