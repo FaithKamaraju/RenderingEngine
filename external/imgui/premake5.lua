@@ -7,10 +7,15 @@ project "IMGUI"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-	
+
+	libdirs {
+		"../sdl3/Binaries/",
+	}
+
 	includedirs { 
 	"./imgui/",
-}
+	"../sdl3/include/",
+	}
 
 	files
 	{
@@ -19,6 +24,11 @@ project "IMGUI"
         "./imgui/misc/debuggers/imgui.natvis",
         "./imgui/misc/debuggers/imgui.natstepfilter",
         "./imgui/misc/cpp/imgui_stdlib.*"
+	}
+
+	links
+	{
+		"SDL3",
 	}
 
     
@@ -31,7 +41,6 @@ project "IMGUI"
 	filter "system:windows"
 		systemversion "latest"
 		staticruntime "On"
-
 		defines 
 		{ 
 			"_CRT_SECURE_NO_WARNINGS"

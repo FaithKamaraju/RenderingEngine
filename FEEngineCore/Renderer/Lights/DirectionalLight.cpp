@@ -30,7 +30,7 @@ void FE::DirectionalLight::tick(float deltaTime)
 }
     
 
-void FE::DirectionalLight::processInput(float deltaTime)
+void FE::DirectionalLight::processInput(const InputEvent& event, float deltaTime)
 {
     
 }

@@ -26,7 +26,7 @@ namespace FE {
         DirectionalLight();
 
         void tick(float deltaTime) override;
-        void processInput(float deltaTime) override;
+        void processInput(const InputEvent& event, float deltaTime) override;
 
         void updateDirection();
 

@@ -2,7 +2,7 @@
 
 #include "EngineMacros.h"
 
-#include "EngineCore/Object.h"
+#include "EngineCore/GameplayFramework/Object.h"
 #include "Renderer/Constants.h"
 #include "Renderer/OpenGL/ErrorChecking.h"
 #include "LightUBOManager.h"

@@ -23,17 +23,22 @@ project "Glad"
 		runtime "Debug"
 		symbols "on"
 
+	filter {"system:windows"}
+		defines{
+			"_NO_CRT_STDIO_INLINE",
+		}
+
 	filter { "system:windows", "configurations:Debug-AS" }	
 		runtime "Debug"
 		symbols "on"
-		sanitize { "Address" }
-		flags { "NoRuntimeChecks", "NoIncrementalLink" }
+		-- sanitize { "Address" }
+		-- flags { "NoRuntimeChecks", "NoIncrementalLink" }
 
 	filter "configurations:Release"
 		runtime "Release"
-		optimize "speed"
+		optimize "on"
 
     filter "configurations:Dist"
 		runtime "Release"
-		optimize "speed"
+		optimize "on"
         symbols "off"

@@ -17,6 +17,7 @@ IncludeDir["GLM"]  = "external/glm/"
 IncludeDir["Assimp"] = "external/assimp/include"
 IncludeDir["ImGui"] = "external/imgui/"
 IncludeDir["sdl3"] = "external/sdl3/include"
+IncludeDir["boost"] = "external/boost_1_89/include/"
 
 include "external/glad"
 include "external/glm"
@@ -25,9 +26,10 @@ include "external/imgui"
 FEEngineCore_libDirs = {}
 FEEngineCore_libDirs["Assimp"] = "external/assimp/Binaries/"
 FEEngineCore_libDirs["sdl3"] = "external/sdl3/Binaries/"
+FEEngineCore_libDirs["program_options"] = "external/boost_1_89/lib/"
 
 EnginePaths = {}
-EnginePaths["FEEngineCore"] = "%{wks.location}/bin/" .. outputdir .. "/FEEngineCore/FEEngineCore.dll"
+EnginePaths["FEEngineCore"] = "%{wks.location}bin/" .. outputdir .. "/FEEngineCore/FEEngineCore.dll"
 
 
 
@@ -63,7 +65,9 @@ project "Sandbox"
 
     filter "configurations:Debug"
       defines { "FE_DEBUG" }
-      symbols "On"
+    --   symbols "On"
+      buildoptions "/MD"
+      sanitize {"address"}
 
    filter "configurations:Release"
       defines { "FE_RELEASE" }
@@ -103,7 +107,12 @@ project "FEEngineCore"
     language "C++"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/")
-    libdirs {FEEngineCore_libDirs.Assimp, FEEngineCore_libDirs.sdl3}
+    libdirs {
+        FEEngineCore_libDirs.Assimp, 
+        FEEngineCore_libDirs.sdl3,
+        FEEngineCore_libDirs.program_options,
+        
+    }
     files
     {
         "%{prj.name}/**.h",
@@ -117,6 +126,7 @@ project "FEEngineCore"
         IncludeDir.ImGui,
         IncludeDir.Assimp,
         IncludeDir.sdl3,
+        IncludeDir.boost,
         "%{prj.location}"
     }
     links 
@@ -125,6 +135,9 @@ project "FEEngineCore"
         "GLM",
         "IMGUI",
         "assimp-vc143-mt",
+        "program_options-vc143-mt-x64",
+        -- "libucrtd.lib",
+        "legacy_stdio_definitions.lib",
         "SDL3",
     }
     prebuildcommands
@@ -136,7 +149,9 @@ project "FEEngineCore"
 
     filter "configurations:Debug"
       defines { "FE_DEBUG" }
-      symbols "On"
+    --   symbols "On"
+      buildoptions "/MD"
+      sanitize {"address"}
 
     filter "configurations:Release"
       defines { "FE_RELEASE" }
@@ -152,6 +167,7 @@ project "FEEngineCore"
         systemversion "latest"
         defines
         {
+            "_NO_CRT_STDIO_INLINE",
             "FE_PLATFORM_WINDOWS",
             "FE_BUILD_DLL",
         }
@@ -200,7 +216,10 @@ project "FEEditor"
 
     filter "configurations:Debug"
       defines { "FE_DEBUG" }
-      symbols "On"
+    --   symbols "On"
+      buildoptions "/MD"
+      sanitize {"address"}
+      
 
     filter "configurations:Release"
       defines { "FE_RELEASE" }

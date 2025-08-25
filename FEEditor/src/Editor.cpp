@@ -7,11 +7,6 @@
 
 Editor::Editor()
 {
-	m_WindowRef = std::make_shared<FE::Window>(1280, 720, "Hello World!");
-
-	m_WindowRef->initGLAD();
-	m_WindowRef->setInputMode(GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSwapInterval(1);
 	
 }
 
@@ -25,5 +20,6 @@ int Editor::Run()
 	int resultInit = engineObj->InitializeEngine();
 	int result = engineObj->StartEngineLoop();
 	delete engineObj;
+
 	return 0;
 }

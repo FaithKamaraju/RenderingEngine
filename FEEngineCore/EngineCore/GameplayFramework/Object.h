@@ -1,11 +1,14 @@
 #pragma once
 
 #include "EngineMacros.h"
-#include "EngineCore/ObjectTransform.h"
+#include "ObjectTransform.h"
+#include "EngineCore/InputSubsystem/InputEvents.h"
 
 #include "glm/glm.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+
 
 namespace FE {
 
@@ -48,7 +51,7 @@ namespace FE {
 
 		virtual void beginPlay() = 0;
 		virtual void tick(float deltaTime) = 0;
-		virtual void processInput(float deltaTime) = 0;
+		virtual void processInput(const InputEvent& event, float deltaTime) = 0;
 
 		virtual void _updateModelMatrix();
 	};

@@ -31,7 +31,7 @@ void FE::SpotLight::tick(float deltaTime)
 {
 }
 
-void FE::SpotLight::processInput(float deltaTime)
+void FE::SpotLight::processInput(const InputEvent& event, float deltaTime)
 {
 }
 void FE::SpotLight::registerLight()

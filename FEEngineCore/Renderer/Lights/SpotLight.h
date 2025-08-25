@@ -1,7 +1,7 @@
 #pragma once
 #include "EngineMacros.h"
 #include "LightBase.h"
-#include "EngineCore/Cameras/Camera.h"
+#include "EngineCore/GameplayFramework/Cameras/Camera.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -35,7 +35,7 @@ namespace FE {
 
         void beginPlay() override;
         void tick(float deltaTime) override;
-        void processInput(float deltaTime) override;
+        void processInput(const InputEvent& event, float deltaTime) override;
 
         void registerLight();
         /*void setUniforms();*/

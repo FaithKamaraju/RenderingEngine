@@ -7,9 +7,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "EngineCore/Window.h"
-#include "EngineCore/InputHandler.h"
-#include "EngineCore/Object.h"
+#include "ApplicationCore/Window/IWindow.h"
+
+#include "EngineCore/GameplayFramework/Object.h"
 
 
 namespace FE {
@@ -20,29 +20,26 @@ namespace FE {
 		glm::vec3 m_cameraUp;
 		glm::mat4 m_view;
 		glm::mat4 m_projection;
-
-		
 		
 	private:
 
 		float m_cameraMoveSpeed;
-
 		float m_lastX, m_lastY;
 		bool m_bFirstMouse = false;
 		unsigned int m_MatricesUBO;
-		std::shared_ptr<Window> m_windowRef;
+		//std::shared_ptr<IWindow> m_windowRef;
 
 	public:
-		Camera(std::shared_ptr<Window> window, float FOV);
+		Camera(std::shared_ptr<IWindow> window, float FOV);
 		Camera() = delete;
 		~Camera();
 
 
 		void beginPlay() override;
 		void tick(float deltaTime) override;
-		void processInput(float deltaTime) override;
-		void cameraLook(double xpos, double ypos);
-		void scrollCameraMoveSpeed(double xOffset, double yOffset);
+		void processInput(const InputEvent& event, float deltaTime) override;
+		void cameraLook(float xpos, float ypos);
+		void scrollCameraMoveSpeed(float xOffset, float yOffset);
 		
 
 	};

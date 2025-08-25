@@ -32,7 +32,7 @@ void FE::PointLight::tick(float deltaTime)
 {
 }
 
-void FE::PointLight::processInput(float deltaTime)
+void FE::PointLight::processInput(const InputEvent& event, float deltaTime)
 {
 }
 

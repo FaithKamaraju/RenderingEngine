@@ -4,19 +4,16 @@
 #include <memory>
 
 #include "glad/glad.h"
-#include "GLFW/glfw3.h"
-
-#include "imgui/imgui.h"
-#include "imgui/backends/imgui_impl_glfw.h"
-#include "imgui/backends/imgui_impl_opengl3.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Renderer/Constants.h"
-
+#include "EngineCore/GameplayStatics/EngineStatics.h"
 #include "Renderer/OpenGL/Shader.h"
+#include "Renderer/Mesh/Model.h"
+#include "Renderer/Lights/PointLight.h"
 
 namespace FE {
 
@@ -25,141 +22,10 @@ namespace FE {
         return new Renderer();
     }
 
-    int Renderer::render() {
-
-        {
-
-            //    float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor());
-            //    IMGUI_CHECKVERSION();
-            //    ImGui::CreateContext();
-            //    ImGuiIO& io = ImGui::GetIO(); (void)io;
-            //    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-            //    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-            //    // Setup Dear ImGui style
-            //    ImGui::StyleColorsDark();
-            //    //ImGui::StyleColorsLight();
-            //    ImGuiStyle& style = ImGui::GetStyle();
-            //    style.FontScaleDpi = main_scale;
-
-            //    // Setup Platform/Renderer backends
-            //    ImGui_ImplGlfw_InitForOpenGL(window->getWindowRef(), true);
-            //    const char* glsl_version = "#version 460";
-            //    ImGui_ImplOpenGL3_Init(glsl_version);
-            //    bool show_demo_window = true;
-            //    bool show_another_window = false;
-            //    ImVec4 clear_color = ImVec4(0.2f, 0.3f, 0.3f, 1.0f);
-
-            //    InputHandler::GetInputHandlerInstance(window->getWindowRef());
-
-            //    GLCall(glEnable(GL_DEPTH_TEST));
-            //    //GLCall(glEnable(GL_CULL_FACE));
+    int Renderer::render() 
+    {
 
 
-            //    Model model("Resources/Models/Basic/Quad/Quad.obj");
-
-
-            //    Shader shader;
-            //    shader.AttachShaders("Resources/Shaders/BasicShader.shader");
-            //    GLCall(unsigned int MatricesBlockIndex = glGetUniformBlockIndex(shader.m_ShaderProgramID, "CameraData"));
-            //    GLCall(glUniformBlockBinding(shader.m_ShaderProgramID, MatricesBlockIndex, BPI_GlobalCameraMatrices));
-
-            //    GLCall(unsigned int DirLightBlockIndex = glGetUniformBlockIndex(shader.m_ShaderProgramID, "DirectionalLight"));
-            //    GLCall(glUniformBlockBinding(shader.m_ShaderProgramID, DirLightBlockIndex, BPI_DirLight));
-
-            //    GLCall(unsigned int LightsBlockIndex = glGetUniformBlockIndex(shader.m_ShaderProgramID, "Lights"));
-            //    GLCall(glUniformBlockBinding(shader.m_ShaderProgramID, LightsBlockIndex, BPI_Lights));
-            //    glm::mat4 ModelMT = glm::mat4(1.0f);
-            //    ModelMT = glm::translate(ModelMT, glm::vec3(0.f,-1.f,0.0f));
-            //    ModelMT = glm::scale(ModelMT, glm::vec3(20.f));
-            //    glm::mat3 NormalMT = glm::mat3(glm::transpose(glm::inverse(ModelMT)));
-
-            //    /*auto dirLight = std::make_shared<DirectionalLight>();
-            //    dirLight->setPositionGlobal(10.f, 10.f, 10.f);*/
-
-            //    auto pointLight = std::make_shared<PointLight>();
-            //    pointLight->setPositionGlobal(0.f, 1.f, 0.0f);
-
-
-            //    std::unique_ptr<Camera> camera = std::make_unique<Camera>(window, 60.0f);
-            //    camera->translateGlobal(0.0f, 0.0f, 10.0f);
-
-            //    camera->beginPlay();
-            //    pointLight->beginPlay();
-            //    //dirLight->beginPlay();
-
-            //    float deltaTime = 0.0f;	// Time between current frame and last frame
-            //    float lastFrame = 0.0f; // Time of last frame
-
-            //    /* Loop until the user closes the window */
-            //    while (!window->getWindowShouldClose())
-            //    {
-            //        float currentFrame = (float)glfwGetTime();
-            //        deltaTime = currentFrame - lastFrame;
-            //        lastFrame = currentFrame;
-
-            //        ImGui_ImplOpenGL3_NewFrame();
-            //        ImGui_ImplGlfw_NewFrame();
-            //        ImGui::NewFrame();
-
-            //        ImGui::ShowDemoWindow(&show_demo_window);
-            //        static float f = 0.0f;
-            //        static int counter = 0;
-
-            //        ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-            //        ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-            //        ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-            //        ImGui::Checkbox("Another Window", &show_another_window);
-
-            //        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-            //        ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-            //        if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-            //            counter++;
-            //        ImGui::SameLine();
-            //        ImGui::Text("counter = %d", counter);
-
-            //        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-            //        ImGui::End();
-            //        
-            //        window->processInput();
-
-            //        camera->processInput(deltaTime);
-            //        camera->tick(deltaTime);  
-
-            //        /* Render here */
-            //        GLCall(glClearColor(0.2f, 0.3f, 0.3f, 1.0f));
-            //        GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-
-            //       
-
-            //        shader.UseShaderProgram();
-            //        shader.setMatrix4fv("model", 1, false, glm::value_ptr(ModelMT));
-            //        shader.setMatrix3fv("normalMatrix", 1, false, glm::value_ptr(NormalMT));
-            //        model.Draw(shader);
-
-            //        ImGui::Render();
-            //        int display_w, display_h;
-            //        glfwGetFramebufferSize(window->getWindowRef(), &display_w, &display_h);
-            //        glViewport(0, 0, display_w, display_h);
-            //        //glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-            //        //glClear(GL_COLOR_BUFFER_BIT);
-            //        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-            //        window->swapBuffers();
-
-
-            //        glfwPollEvents();
-            //    }
-            //}
-            //ImGui_ImplOpenGL3_Shutdown();
-            //ImGui_ImplGlfw_Shutdown();
-            //ImGui::DestroyContext();
-
-            //glfwTerminate();
-            return 0;
-        }
-
+    return 0;
     }
 }

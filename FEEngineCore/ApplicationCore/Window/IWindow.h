@@ -2,31 +2,42 @@
 
 #include "EngineMacros.h"
 #include "Symbols.h"
-
-
+#include <memory>
+struct SDL_Window;
 namespace FE {
-	 
+
+	struct InputEvent;
 	class FE_API IWindow {
+		
+	protected:
+
+		
+		bool bShouldWindowClose = false;
 
 	public:
+		SDL_Window* m_Window;
+		int m_Width, m_Height;
+		const char* m_Title;
 
-		virtual ~IWindow() = 0;
+		IWindow();
 
-		virtual void Init(int width, int height, const char* title, FEenum windowMode) = 0;
-		
-		virtual bool getWindowShouldClose() const = 0;
+		virtual ~IWindow() = default;
 
-		virtual void setInputMode(FEenum mode, FEenum value) const = 0;
+		virtual FEbool Init(int width, int height, const char* title, FEWindowMode windowMode) = 0;
 
-		virtual void processInput() = 0;
+		virtual void clearBuffer(float r, float g, float b, float a) = 0;
 
-		virtual void clearBuffers() = 0;
+		virtual void swapBuffer() = 0;
 
-		virtual void swapBuffers() = 0;
+		inline bool getWindowShouldClose() const { return bShouldWindowClose; };
 
-		virtual void setFrameBufferSizeCallBack() const = 0;
-		
-		static std::unique_ptr<IWindow> CreateWindow();
+		inline void setWindowShouldClose(bool value) { bShouldWindowClose = value; };
+
+		void setCursorMode(FECursorMode mode) const;
+
+		virtual void processInput(const InputEvent& event, float deltaTime);
+
+		static std::shared_ptr<IWindow> CreateWindowObj(GraphicsAPI api);
 	};
 }
 

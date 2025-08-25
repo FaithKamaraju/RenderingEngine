@@ -1,48 +1,35 @@
 #pragma once
 
 #include "IWindow.h"
-#include "ApplicationCore/InputHandler.h"
+#include "glad/glad.h"
+#include "SDL3/SDL.h"
 
 namespace FE {
 
 	class FE_API WindowOGL : public IWindow
 	{
-
 	public:
+
+		WindowOGL();
+
+		FEbool Init(int width, int height, const char* title, FEWindowMode windowMode) override;
+
+		void clearBuffer(float r, float g, float b, float a) override;
+
+		void swapBuffer() override;
 
 		~WindowOGL() override;
 
-		void Init(int width, int height, const char* title, FEenum windowMode) override;
+	private:
 
-		bool getWindowShouldClose() const;
+		SDL_GLContext m_GLContext;
+		GLbitfield m_RendererFlags = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
 
-		void setInputMode(FEenum mode, FEenum value) const;
 
-		void processInput();
 
-		void clearBuffers();
-
-		void swapBuffers();
-
-		void setFrameBufferSizeCallBack() const;
-
-		static std::unique_ptr<IWindow> CreateWindow();
+	
 	};
 
-	static void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-	{
-		glViewport(0, 0, width, height);
-	}
-
-	static void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-	{
-		InputHandler::GetInputHandlerInstance(window)->setCursorPos({ xpos, ypos });
-	}
-
-	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-	{
-		InputHandler::GetInputHandlerInstance(window)->setScrollOffset({ xoffset, yoffset });
-	}
+	
 }
-
 
