@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "EngineMacros.h"
-#include "Renderer/OpenGL/Vertex.h"
+#include "EngineCore/Renderer/OpenGL/Vertex.h"
 
 namespace FE {
 

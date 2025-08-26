@@ -1,7 +1,7 @@
 #pragma once
 
 #include "EngineMacros.h"
-#include "Renderer/Constants.h"
+#include "EngineCore/Renderer/Constants.h"
 #include <vector>
 #include <memory>
 #include <mutex>

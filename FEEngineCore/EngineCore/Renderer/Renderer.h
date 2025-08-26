@@ -1,6 +1,6 @@
 #pragma once
 #include "EngineMacros.h"
-#include "Renderer/SceneGraph/SceneGraph.h"
+#include "EngineCore/Renderer/SceneGraph/SceneGraph.h"
 
 #include "glm/glm.hpp"
 #include <memory>

@@ -11,11 +11,11 @@
 
 #include "SDL3/SDL.h"
 
-#include "Renderer/Constants.h"
+#include "EngineCore/Renderer/Constants.h"
 #include "EngineCore/GameplayStatics/EngineStatics.h"
-#include "Renderer/OpenGL/Shader.h"
-#include "Renderer/Mesh/Model.h"
-#include "Renderer/Lights/PointLight.h"
+#include "EngineCore/Renderer/OpenGL/Shader.h"
+#include "EngineCore/Renderer/Mesh/Model.h"
+#include "EngineCore/Renderer/Lights/PointLight.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

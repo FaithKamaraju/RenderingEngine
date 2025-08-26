@@ -8,10 +8,10 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "Renderer/OpenGL/Texture.h"
-#include "Renderer/OpenGL/Vertex.h"
-#include "Renderer/OpenGL/VertexArrayObject.h"
-#include "Renderer/OpenGL/Shader.h"
+#include "EngineCore/Renderer/OpenGL/Texture.h"
+#include "EngineCore/Renderer/OpenGL/Vertex.h"
+#include "EngineCore/Renderer/OpenGL/VertexArrayObject.h"
+#include "EngineCore/Renderer/OpenGL/Shader.h"
 
 
 namespace FE {

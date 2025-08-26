@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Renderer/OpenGL/ErrorChecking.h"
+#include "EngineCore/Renderer/OpenGL/ErrorChecking.h"
 
 #ifdef FE_PLATFORM_WINDOWS
 	//#include <Windows.h>

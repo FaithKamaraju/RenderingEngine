@@ -1,7 +1,7 @@
 #pragma once
 
 #include "EngineMacros.h"
-#include "Renderer/stb_image.h"
+#include "EngineCore/Renderer/stb_image.h"
 #include <iostream>
 #include <string>
 #include "glad/glad.h"

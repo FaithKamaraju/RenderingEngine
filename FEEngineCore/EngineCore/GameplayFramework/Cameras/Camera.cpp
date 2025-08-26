@@ -3,10 +3,10 @@
 #include <iostream>
 #include <functional>
 
-#include "Renderer/Constants.h"
+#include "EngineCore/Renderer/Constants.h"
 #include "EngineCore/GameplayStatics/EngineStatics.h"
 #include "EngineCore/InputSubsystem/InputHandler.h"
-#include "Renderer/OpenGL/ErrorChecking.h"
+#include "EngineCore/Renderer/OpenGL/ErrorChecking.h"
 
 FE::Camera::Camera(std::shared_ptr<IWindow> window, float FOV)
     :m_cameraFront(0.0f, 0.0f, -1.0f), m_cameraUp(0.0f, 1.0f, 0.0f), m_view(1.0f)

@@ -3,8 +3,8 @@
 #include "EngineMacros.h"
 
 #include "EngineCore/GameplayFramework/Object.h"
-#include "Renderer/Constants.h"
-#include "Renderer/OpenGL/ErrorChecking.h"
+#include "EngineCore/Renderer/Constants.h"
+#include "EngineCore/Renderer/OpenGL/ErrorChecking.h"
 #include "LightUBOManager.h"
 
 namespace FE {

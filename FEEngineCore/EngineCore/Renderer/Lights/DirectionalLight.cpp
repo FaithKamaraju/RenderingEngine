@@ -1,6 +1,6 @@
 #include "DirectionalLight.h"
 #include "glad/glad.h"
-#include "Renderer/Constants.h"
+#include "EngineCore/Renderer/Constants.h"
 #include <iostream>
 
 FE::DirectionalLight::DirectionalLight()
